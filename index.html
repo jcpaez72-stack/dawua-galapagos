@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#064E47">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>DAWUA · Inventario Galápagos</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── RESET ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{height:100%;height:-webkit-fill-available;scroll-behavior:smooth}
+body{
+  font-family:'Plus Jakarta Sans',sans-serif;
+  background:#F2EFE9;
+  color:#1A1A1A;
+  min-height:100vh;
+  min-height:-webkit-fill-available;
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+
+/* ── TOKENS ── */
+:root{
+  --verde:#064E47;
+  --verde-med:#075E54;
+  --verde-brt:#25D366;
+  --verde-clr:#D1FAE5;
+  --verde-lgt:#F0FDF4;
+  --amber:#F59E0B;
+  --amber-clr:#FEF3C7;
+  --rojo:#EF4444;
+  --rojo-clr:#FEE2E2;
+  --azul:#1D4ED8;
+  --bg:#F2EFE9;
+  --surface:#FFFFFF;
+  --border:#E2DDD6;
+  --text:#1A1A1A;
+  --text-s:#6B7280;
+  --radius:14px;
+  --shadow:0 2px 12px rgba(6,78,71,0.08);
+}
+
+/* ── HEADER ── */
+.app-header{
+  background:var(--verde);
+  padding:max(env(safe-area-inset-top,0px),16px) 20px 16px;
+  display:flex;align-items:center;gap:12px;
+  position:sticky;top:0;z-index:50;
+}
+.logo{
+  width:38px;height:38px;border-radius:10px;
+  background:linear-gradient(135deg,#0A6E5F,#25D366);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+.header-info{flex:1}
+.header-title{color:#fff;font-size:16px;font-weight:800;letter-spacing:-.3px}
+.header-sub{color:rgba(255,255,255,.55);font-size:11px;margin-top:1px;font-family:'JetBrains Mono',monospace}
+.online-badge{
+  background:rgba(37,211,102,.2);border:1px solid rgba(37,211,102,.4);
+  border-radius:20px;padding:3px 10px;
+  color:#4ADE80;font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;
+  display:flex;align-items:center;gap:5px;flex-shrink:0;
+}
+.online-dot{width:6px;height:6px;border-radius:50%;background:#4ADE80;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── NAV TABS ── */
+.nav-tabs{
+  background:var(--verde-med);
+  display:flex;padding:0 16px;gap:4px;
+  overflow-x:auto;scrollbar-width:none;
+}
+.nav-tabs::-webkit-scrollbar{display:none}
+.nav-tab{
+  padding:10px 14px;font-size:12px;font-weight:600;color:rgba(255,255,255,.55);
+  cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;
+  transition:all .2s;background:none;border:none;font-family:inherit;
+  border-bottom:2px solid transparent;
+}
+.nav-tab.active{color:#fff;border-bottom-color:var(--verde-brt)}
+
+/* ── MAIN ── */
+.main{padding:16px;max-width:480px;margin:0 auto}
+
+/* ── CARDS ── */
+.card{
+  background:var(--surface);border-radius:var(--radius);
+  padding:18px;margin-bottom:14px;box-shadow:var(--shadow);
+  border:1px solid var(--border);
+}
+.card-title{
+  font-size:13px;font-weight:700;color:var(--verde);
+  text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px;
+  display:flex;align-items:center;gap:8px;
+}
+.card-title::before{content:'';width:3px;height:16px;background:var(--verde-brt);border-radius:2px;flex-shrink:0}
+
+/* ── STOCK SEMÁFORO ── */
+.stock-grid{display:flex;flex-direction:column;gap:8px}
+.stock-item{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;border-radius:10px;border:1px solid var(--border);
+  background:var(--bg);
+}
+.stock-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.stock-dot.ok{background:#25D366}
+.stock-dot.warn{background:var(--amber)}
+.stock-dot.danger{background:var(--rojo);animation:blink .8s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.stock-pdv{flex:1;font-size:13px;font-weight:600}
+.stock-units{font-size:22px;font-weight:800;font-family:'JetBrains Mono',monospace;min-width:40px;text-align:right}
+.stock-units.ok{color:#25D366}
+.stock-units.warn{color:var(--amber)}
+.stock-units.danger{color:var(--rojo)}
+.stock-bar{height:4px;background:#E5E7EB;border-radius:2px;margin-top:5px;overflow:hidden}
+.stock-bar-fill{height:100%;border-radius:2px;transition:width .5s}
+
+/* ── FORMULARIO ── */
+.form-group{margin-bottom:14px}
+label{display:block;font-size:12px;font-weight:700;color:var(--text-s);
+  text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+select,input[type="number"],input[type="text"]{
+  width:100%;padding:13px 14px;border-radius:10px;
+  border:1.5px solid var(--border);background:var(--bg);
+  font-size:15px;font-family:inherit;color:var(--text);
+  appearance:none;-webkit-appearance:none;outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+select:focus,input:focus{
+  border-color:var(--verde-med);
+  box-shadow:0 0 0 3px rgba(7,94,84,.1);
+}
+.tipo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.tipo-btn{
+  padding:14px 10px;border-radius:10px;border:1.5px solid var(--border);
+  background:var(--bg);font-size:13px;font-weight:600;color:var(--text-s);
+  cursor:pointer;text-align:center;transition:all .15s;font-family:inherit;
+}
+.tipo-btn.active{
+  border-color:var(--verde-med);background:var(--verde-lgt);color:var(--verde);
+}
+.tipo-icon{font-size:22px;display:block;margin-bottom:4px}
+
+/* ── BOTÓN PRINCIPAL ── */
+.btn-primary{
+  width:100%;padding:16px;border-radius:12px;
+  background:linear-gradient(135deg,var(--verde-med),#0A9B6B);
+  color:#fff;font-size:16px;font-weight:800;font-family:inherit;
+  border:none;cursor:pointer;letter-spacing:-.2px;
+  box-shadow:0 4px 18px rgba(7,94,84,.35);
+  transition:transform .15s,box-shadow .15s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-primary:active{transform:scale(.97);box-shadow:0 2px 8px rgba(7,94,84,.2)}
+.btn-primary:disabled{background:#ccc;box-shadow:none;cursor:default}
+
+/* ── NOTAS ── */
+.nota{
+  font-size:12px;color:var(--verde);background:var(--verde-lgt);
+  border:1px solid #A7F3D0;border-radius:8px;padding:10px 12px;
+  margin-top:10px;line-height:1.5;
+}
+
+/* ── HISTORIAL ── */
+.historial-item{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:12px 0;border-bottom:1px solid var(--border);
+}
+.historial-item:last-child{border-bottom:none}
+.hist-icon{
+  width:34px;height:34px;border-radius:9px;display:flex;align-items:center;
+  justify-content:center;font-size:15px;flex-shrink:0;margin-top:2px;
+}
+.hist-icon.entrega{background:#D1FAE5}
+.hist-icon.venta{background:#DBEAFE}
+.hist-icon.alerta{background:#FEE2E2}
+.hist-info{flex:1}
+.hist-pdv{font-size:13px;font-weight:700}
+.hist-det{font-size:12px;color:var(--text-s);margin-top:2px}
+.hist-meta{text-align:right;flex-shrink:0}
+.hist-qty{font-size:16px;font-weight:800;font-family:'JetBrains Mono',monospace}
+.hist-time{font-size:10px;color:var(--text-s);margin-top:2px;font-family:'JetBrains Mono',monospace}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:max(env(safe-area-inset-bottom,16px),16px);
+  left:50%;transform:translateX(-50%) translateY(100px);
+  background:var(--verde);color:#fff;border-radius:12px;
+  padding:14px 22px;font-size:14px;font-weight:700;
+  box-shadow:0 8px 32px rgba(6,78,71,.4);z-index:999;
+  transition:transform .35s cubic-bezier(.34,1.56,.64,1);
+  white-space:nowrap;display:flex;align-items:center;gap:8px;
+}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.error{background:var(--rojo)}
+
+/* ── ALERTA CRÍTICA ── */
+.alerta-box{
+  background:var(--rojo-clr);border:1.5px solid var(--rojo);
+  border-radius:10px;padding:12px 14px;margin-bottom:8px;
+}
+.alerta-title{font-size:13px;font-weight:800;color:var(--rojo);margin-bottom:2px}
+.alerta-det{font-size:12px;color:#7F1D1D}
+
+/* ── KPIs ── */
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.kpi-box{
+  background:var(--surface);border-radius:12px;padding:14px;
+  border:1px solid var(--border);box-shadow:var(--shadow);text-align:center;
+}
+.kpi-val{font-size:26px;font-weight:800;color:var(--verde);font-family:'JetBrains Mono',monospace}
+.kpi-lbl{font-size:11px;color:var(--text-s);margin-top:3px}
+.kpi-box.amber .kpi-val{color:var(--amber)}
+.kpi-box.azul .kpi-val{color:var(--azul)}
+
+/* ── LIQUIDACIÓN ── */
+.liq-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;
+}
+.liq-row:last-child{border-bottom:none}
+.liq-row.total{font-weight:800;color:var(--verde);font-size:14px;padding-top:12px}
+.liq-row.grucsa{font-weight:700;color:var(--azul)}
+.liq-val{font-family:'JetBrains Mono',monospace;font-weight:700}
+
+/* ── INSTRUCCIONES ── */
+.step-block{
+  display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);
+}
+.step-block:last-child{border-bottom:none}
+.step-num{
+  width:28px;height:28px;border-radius:50%;background:var(--verde);
+  color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;
+  justify-content:center;flex-shrink:0;margin-top:1px;
+}
+.step-info{flex:1}
+.step-title{font-size:13px;font-weight:700;margin-bottom:3px}
+.step-det{font-size:12px;color:var(--text-s);line-height:1.5}
+.code-block{
+  background:#1A1A1A;color:#4ADE80;border-radius:8px;padding:10px 12px;
+  font-family:'JetBrains Mono',monospace;font-size:11px;margin-top:8px;
+  overflow-x:auto;white-space:nowrap;
+}
+
+/* ── SCREEN STATES ── */
+.screen{display:none}
+.screen.active{display:block}
+
+/* ── SPINNER ── */
+.spinner{
+  width:20px;height:20px;border:2px solid rgba(255,255,255,.3);
+  border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="app-header">
+  <div class="logo">🌿</div>
+  <div class="header-info">
+    <div class="header-title">DAWUA Galápagos</div>
+    <div class="header-sub">593IA · Inventario Santa Cruz</div>
+  </div>
+  <div class="online-badge">
+    <div class="online-dot"></div>
+    ACTIVO
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav-tabs">
+  <button class="nav-tab active" onclick="showTab('dashboard')">📊 Dashboard</button>
+  <button class="nav-tab" onclick="showTab('registrar')">➕ Registrar</button>
+  <button class="nav-tab" onclick="showTab('historial')">📋 Historial</button>
+  <button class="nav-tab" onclick="showTab('liquidacion')">💰 Liquidación</button>
+  <button class="nav-tab" onclick="showTab('instrucciones')">⚙️ Configurar</button>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- ══ DASHBOARD ══ -->
+  <div id="screen-dashboard" class="screen active">
+
+    <!-- Alertas críticas -->
+    <div id="alertas-container"></div>
+
+    <!-- KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi-box">
+        <div class="kpi-val" id="kpi-vendidas">0</div>
+        <div class="kpi-lbl">Unidades vendidas</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-val" id="kpi-stock">50</div>
+        <div class="kpi-lbl">Stock total isla</div>
+      </div>
+      <div class="kpi-box amber">
+        <div class="kpi-val" id="kpi-ingresos">$0</div>
+        <div class="kpi-lbl">Ingresos brutos</div>
+      </div>
+      <div class="kpi-box azul">
+        <div class="kpi-val" id="kpi-utilidad">$0</div>
+        <div class="kpi-lbl">Utilidad neta (50% c/u)</div>
+      </div>
+    </div>
+
+    <!-- Stock semáforo -->
+    <div class="card">
+      <div class="card-title">Stock por punto de venta</div>
+      <div class="stock-grid" id="stock-grid"></div>
+    </div>
+
+    <!-- Última actividad -->
+    <div class="card">
+      <div class="card-title">Última actividad</div>
+      <div id="ultima-actividad">
+        <div style="text-align:center;padding:20px;color:var(--text-s);font-size:13px">
+          Sin movimientos aún. Registra el primer movimiento ➕
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ REGISTRAR ══ -->
+  <div id="screen-registrar" class="screen">
+
+    <div class="card">
+      <div class="card-title">Tipo de movimiento</div>
+      <div class="tipo-grid">
+        <button class="tipo-btn active" onclick="selectTipo('entrega',this)">
+          <span class="tipo-icon">📦</span>Entrega a PDV
+        </button>
+        <button class="tipo-btn" onclick="selectTipo('venta',this)">
+          <span class="tipo-icon">💰</span>Venta reportada
+        </button>
+        <button class="tipo-btn" onclick="selectTipo('reposicion',this)">
+          <span class="tipo-icon">🔄</span>Reposición
+        </button>
+        <button class="tipo-btn" onclick="selectTipo('ajuste',this)">
+          <span class="tipo-icon">✏️</span>Ajuste
+        </button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Detalle del movimiento</div>
+
+      <div class="form-group">
+        <label>Punto de venta</label>
+        <select id="sel-pdv">
+          <option value="">Selecciona el PDV...</option>
+          <option value="Finch Bay">🏨 Hotel Finch Bay</option>
+          <option value="Ikala">🏨 Hotel Ikala Galápagos</option>
+          <option value="Red Mangrove">🏨 Red Mangrove Lodge</option>
+          <option value="Royal Palm">🏨 Royal Palm Hilton</option>
+          <option value="Malecon">🛍️ Tienda Malecón #1</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Cantidad (unidades)</label>
+        <input type="number" id="inp-cantidad" placeholder="0" min="0" max="50" inputmode="numeric">
+      </div>
+
+      <div class="form-group" id="grupo-precio" style="display:none">
+        <label>Precio por unidad ($)</label>
+        <input type="number" id="inp-precio" value="14.99" step="0.01" inputmode="decimal">
+      </div>
+
+      <div class="form-group">
+        <label>Notas (opcional)</label>
+        <input type="text" id="inp-notas" placeholder="Ej: entregué en recepción con María">
+      </div>
+
+      <div class="nota" id="nota-calculo"></div>
+
+      <div style="margin-top:16px">
+        <button class="btn-primary" id="btn-registrar" onclick="registrarMovimiento()">
+          <span id="btn-text">✓ Registrar movimiento</span>
+          <div class="spinner" id="btn-spinner" style="display:none"></div>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ HISTORIAL ══ -->
+  <div id="screen-historial" class="screen">
+    <div class="card">
+      <div class="card-title">Todos los movimientos</div>
+      <div id="historial-list">
+        <div style="text-align:center;padding:20px;color:var(--text-s);font-size:13px">
+          Sin movimientos aún.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ LIQUIDACIÓN ══ -->
+  <div id="screen-liquidacion" class="screen">
+
+    <div class="card">
+      <div class="card-title">Resumen para liquidar a DAWUA</div>
+
+      <div class="form-group">
+        <label>Período</label>
+        <select id="sel-periodo">
+          <option>Quincena 1 · Jul 1–15</option>
+          <option>Quincena 2 · Jul 16–31</option>
+          <option>Quincena 3 · Ago 1–15</option>
+        </select>
+      </div>
+
+      <div id="liq-resumen"></div>
+
+      <div style="margin-top:16px">
+        <button class="btn-primary" onclick="exportarLiquidacion()">
+          📤 Exportar resumen
+        </button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Cuentas de destino</div>
+      <div style="font-size:12px;color:var(--text-s);line-height:1.8">
+        <div style="margin-bottom:8px">
+          <strong style="color:var(--verde)">DAWUANATURE S.A.</strong> · Trizzia Bosqueti<br>
+          <span id="cuenta-dawua" style="font-family:'JetBrains Mono',monospace">⚠️ Completar datos bancarios en Google Sheets</span>
+        </div>
+        <div>
+          <strong style="color:var(--azul)">GRUCSA</strong> · RUC 0992585684001<br>
+          <span style="font-family:'JetBrains Mono',monospace">⚠️ Juan Carlos completa datos bancarios</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ INSTRUCCIONES ══ -->
+  <div id="screen-instrucciones" class="screen">
+
+    <div class="card">
+      <div class="card-title">Conectar con Google Sheets</div>
+
+      <div style="background:var(--amber-clr);border:1px solid var(--amber);border-radius:10px;padding:12px;margin-bottom:14px">
+        <div style="font-size:13px;font-weight:700;color:#92400E;margin-bottom:4px">⚠️ Paso necesario para guardar datos</div>
+        <div style="font-size:12px;color:#78350F;line-height:1.5">
+          Por ahora los datos se guardan solo en este dispositivo. Sigue estos pasos para conectar con Google Sheets y que los datos sean permanentes y visibles para Juan Carlos y Trizzia.
+        </div>
+      </div>
+
+      <div class="step-block">
+        <div class="step-num">1</div>
+        <div class="step-info">
+          <div class="step-title">Abrir Google Sheets</div>
+          <div class="step-det">Ve a docs.google.com/spreadsheets y abre el archivo <strong>Tablero_DAWUA_593IA</strong> compartido por Juan Carlos.</div>
+        </div>
+      </div>
+
+      <div class="step-block">
+        <div class="step-num">2</div>
+        <div class="step-info">
+          <div class="step-title">Abrir Apps Script</div>
+          <div class="step-det">En Google Sheets: menú <strong>Extensiones → Apps Script</strong>. Se abre el editor de código.</div>
+        </div>
+      </div>
+
+      <div class="step-block">
+        <div class="step-num">3</div>
+        <div class="step-info">
+          <div class="step-title">Pegar este código</div>
+          <div class="step-det">Borra todo el contenido del editor y pega el siguiente código:</div>
+          <div class="code-block" id="apps-script-code">// Cargando código...</div>
+          <button onclick="copiarScript()" style="margin-top:8px;padding:8px 14px;border-radius:8px;background:var(--verde);color:#fff;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">
+            📋 Copiar código
+          </button>
+        </div>
+      </div>
+
+      <div class="step-block">
+        <div class="step-num">4</div>
+        <div class="step-info">
+          <div class="step-title">Publicar como aplicación web</div>
+          <div class="step-det">
+            1. Clic en <strong>Implementar → Nueva implementación</strong><br>
+            2. Tipo: <strong>Aplicación web</strong><br>
+            3. Ejecutar como: <strong>Yo</strong><br>
+            4. Acceso: <strong>Cualquier persona</strong><br>
+            5. Clic en <strong>Implementar</strong> → copia la URL
+          </div>
+        </div>
+      </div>
+
+      <div class="step-block">
+        <div class="step-num">5</div>
+        <div class="step-info">
+          <div class="step-title">Pegar la URL aquí</div>
+          <div class="step-det">Una vez que tengas la URL del Apps Script, pégala aquí:</div>
+          <input type="text" id="inp-webhook" placeholder="https://script.google.com/macros/s/..."
+            style="margin-top:8px;font-size:12px;font-family:'JetBrains Mono',monospace">
+          <button onclick="guardarWebhook()" style="margin-top:8px;padding:8px 14px;border-radius:8px;background:var(--verde-med);color:#fff;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;width:100%">
+            ✓ Guardar URL y conectar
+          </button>
+        </div>
+      </div>
+
+      <div class="step-block">
+        <div class="step-num">6</div>
+        <div class="step-info">
+          <div class="step-title">Probar la conexión</div>
+          <div class="step-det">Registra un movimiento de prueba y verifica que aparece en el Google Sheets.</div>
+          <button onclick="probarConexion()" style="margin-top:8px;padding:8px 14px;border-radius:8px;background:var(--azul);color:#fff;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;width:100%">
+            🔗 Probar conexión
+          </button>
+          <div id="test-result" style="margin-top:8px;font-size:12px;display:none"></div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+
+// ═══════════════════════════════════════════
+// ESTADO GLOBAL
+// ═══════════════════════════════════════════
+const UMBRAL_ALERTA = 5;
+const PVP = 14.99;
+const IVA = 0.15;
+const BASE_SIN_IVA = PVP / (1 + IVA); // 13.03
+const COMISION_PDV = 0.20;
+const COMISION_ARIANA = 0.10;
+const COSTO_FABRICA = 3.50;
+const LOGISTICA = 0.25;
+
+const PDV_LIST = [
+  { id: 'Finch Bay',   nombre: 'Hotel Finch Bay',        emoji: '🏨' },
+  { id: 'Ikala',       nombre: 'Hotel Ikala Galápagos',  emoji: '🏨' },
+  { id: 'Red Mangrove',nombre: 'Red Mangrove Lodge',     emoji: '🏨' },
+  { id: 'Royal Palm',  nombre: 'Royal Palm Hilton',       emoji: '🏨' },
+  { id: 'Malecon',     nombre: 'Tienda Malecón #1',       emoji: '🛍️' },
+];
+
+let estado = {
+  stock: { 'Finch Bay': 10, 'Ikala': 10, 'Red Mangrove': 10, 'Royal Palm': 10, 'Malecon': 10 },
+  movimientos: [],
+  tipoActual: 'entrega',
+  webhookURL: '',
+};
+
+// Cargar estado guardado
+function cargarEstado() {
+  try {
+    const s = localStorage.getItem('dawua_estado');
+    if (s) {
+      const parsed = JSON.parse(s);
+      estado = { ...estado, ...parsed };
+    }
+    const wh = localStorage.getItem('dawua_webhook');
+    if (wh) estado.webhookURL = wh;
+  } catch(e) {}
+}
+
+function guardarEstado() {
+  try {
+    localStorage.setItem('dawua_estado', JSON.stringify({
+      stock: estado.stock,
+      movimientos: estado.movimientos,
+    }));
+  } catch(e) {}
+}
+
+// ═══════════════════════════════════════════
+// NAVEGACIÓN
+// ═══════════════════════════════════════════
+function showTab(tab) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(`screen-${tab}`).classList.add('active');
+  event.target.classList.add('active');
+
+  if (tab === 'dashboard') renderDashboard();
+  if (tab === 'historial') renderHistorial();
+  if (tab === 'liquidacion') renderLiquidacion();
+  if (tab === 'instrucciones') renderInstrucciones();
+}
+
+// ═══════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════
+function renderDashboard() {
+  // KPIs
+  const ventas = estado.movimientos.filter(m => m.tipo === 'venta').reduce((a,m) => a+m.cantidad, 0);
+  const stockTotal = Object.values(estado.stock).reduce((a,b) => a+b, 0);
+  const ingresos = ventas * PVP;
+  const utilidad = ventas * (BASE_SIN_IVA * (1 - COMISION_PDV - COMISION_ARIANA) - COSTO_FABRICA - LOGISTICA);
+
+  document.getElementById('kpi-vendidas').textContent = ventas;
+  document.getElementById('kpi-stock').textContent = stockTotal;
+  document.getElementById('kpi-ingresos').textContent = '$' + ingresos.toFixed(2);
+  document.getElementById('kpi-utilidad').textContent = '$' + Math.max(0, utilidad/2).toFixed(2);
+
+  // Alertas
+  const alertasContainer = document.getElementById('alertas-container');
+  alertasContainer.innerHTML = '';
+  PDV_LIST.forEach(pdv => {
+    const s = estado.stock[pdv.id] || 0;
+    if (s <= UMBRAL_ALERTA) {
+      alertasContainer.innerHTML += `
+        <div class="alerta-box">
+          <div class="alerta-title">🚨 ${pdv.nombre} — Stock crítico</div>
+          <div class="alerta-det">Solo quedan <strong>${s} unidades</strong>. Umbral mínimo: ${UMBRAL_ALERTA}u. Reponer pronto.</div>
+        </div>`;
+    }
+  });
+
+  // Stock semáforo
+  const grid = document.getElementById('stock-grid');
+  grid.innerHTML = PDV_LIST.map(pdv => {
+    const s = estado.stock[pdv.id] || 0;
+    const cls = s <= 0 ? 'danger' : s <= UMBRAL_ALERTA ? 'warn' : 'ok';
+    const pct = Math.min(100, (s/10)*100);
+    const colors = { ok: '#25D366', warn: '#F59E0B', danger: '#EF4444' };
+    return `
+      <div class="stock-item">
+        <div class="stock-dot ${cls}"></div>
+        <div style="flex:1">
+          <div class="stock-pdv">${pdv.emoji} ${pdv.nombre}</div>
+          <div class="stock-bar"><div class="stock-bar-fill" style="width:${pct}%;background:${colors[cls]}"></div></div>
+        </div>
+        <div class="stock-units ${cls}">${s}</div>
+      </div>`;
+  }).join('');
+
+  // Última actividad
+  const ul = document.getElementById('ultima-actividad');
+  const recientes = [...estado.movimientos].reverse().slice(0, 3);
+  if (recientes.length === 0) {
+    ul.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-s);font-size:13px">Sin movimientos aún. Registra el primero ➕</div>';
+  } else {
+    ul.innerHTML = recientes.map(m => historialItemHTML(m)).join('');
+  }
+}
+
+// ═══════════════════════════════════════════
+// TIPO DE MOVIMIENTO
+// ═══════════════════════════════════════════
+function selectTipo(tipo, btn) {
+  document.querySelectorAll('.tipo-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  estado.tipoActual = tipo;
+  // Mostrar precio solo en ventas
+  document.getElementById('grupo-precio').style.display = tipo === 'venta' ? 'block' : 'none';
+  actualizarNota();
+}
+
+function actualizarNota() {
+  const pdv = document.getElementById('sel-pdv').value;
+  const qty = parseInt(document.getElementById('inp-cantidad').value) || 0;
+  const nota = document.getElementById('nota-calculo');
+  const tipo = estado.tipoActual;
+
+  if (!pdv || !qty) { nota.innerHTML = ''; return; }
+
+  const pdvNombre = PDV_LIST.find(p => p.id === pdv)?.nombre || pdv;
+  const stockActual = estado.stock[pdv] || 0;
+
+  if (tipo === 'entrega') {
+    const nuevoStock = stockActual + qty;
+    nota.innerHTML = `📦 <strong>${pdvNombre}</strong>: stock actual ${stockActual}u → nuevo stock <strong>${nuevoStock}u</strong>`;
+  } else if (tipo === 'venta') {
+    const nuevoStock = Math.max(0, stockActual - qty);
+    const total = qty * PVP;
+    const comPDV = qty * BASE_SIN_IVA * COMISION_PDV;
+    const comAriana = qty * BASE_SIN_IVA * COMISION_ARIANA;
+    const utilidad = qty * (BASE_SIN_IVA * (1-COMISION_PDV-COMISION_ARIANA) - COSTO_FABRICA - LOGISTICA);
+    nota.innerHTML = `
+      💰 <strong>${qty} frascos × $${PVP}</strong> = <strong>$${total.toFixed(2)}</strong><br>
+      📦 Stock ${pdvNombre}: ${stockActual}u → <strong>${nuevoStock}u</strong><br>
+      🤝 PDV 20%: $${comPDV.toFixed(2)} · Ariana 10%: $${comAriana.toFixed(2)}<br>
+      ✨ Utilidad neta: <strong>$${utilidad.toFixed(2)}</strong> (50% c/u)`;
+  } else if (tipo === 'reposicion') {
+    nota.innerHTML = `🔄 Solicitando ${qty}u desde DAWUA GYE para <strong>${pdvNombre}</strong>`;
+  }
+}
+
+// Actualizar nota en tiempo real
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('sel-pdv').addEventListener('change', actualizarNota);
+  document.getElementById('inp-cantidad').addEventListener('input', actualizarNota);
+});
+
+// ═══════════════════════════════════════════
+// REGISTRAR MOVIMIENTO
+// ═══════════════════════════════════════════
+async function registrarMovimiento() {
+  const pdv = document.getElementById('sel-pdv').value;
+  const qty = parseInt(document.getElementById('inp-cantidad').value);
+  const notas = document.getElementById('inp-notas').value;
+  const tipo = estado.tipoActual;
+
+  if (!pdv) { showToast('Selecciona un punto de venta', true); return; }
+  if (!qty || qty <= 0) { showToast('Ingresa una cantidad válida', true); return; }
+
+  // Validar stock para ventas
+  if (tipo === 'venta' && qty > (estado.stock[pdv] || 0)) {
+    showToast(`Stock insuficiente. Disponible: ${estado.stock[pdv] || 0}u`, true);
+    return;
+  }
+
+  // Bloquear botón
+  const btn = document.getElementById('btn-registrar');
+  const btnText = document.getElementById('btn-text');
+  const spinner = document.getElementById('btn-spinner');
+  btn.disabled = true;
+  btnText.style.display = 'none';
+  spinner.style.display = 'block';
+
+  // Crear movimiento
+  const mov = {
+    id: Date.now(),
+    fecha: new Date().toISOString(),
+    tipo,
+    pdv,
+    pdvNombre: PDV_LIST.find(p => p.id === pdv)?.nombre || pdv,
+    cantidad: qty,
+    precio: tipo === 'venta' ? parseFloat(document.getElementById('inp-precio').value) : 0,
+    notas,
+    stockAntes: estado.stock[pdv] || 0,
+  };
+
+  // Actualizar stock
+  if (tipo === 'entrega' || tipo === 'reposicion') {
+    estado.stock[pdv] = (estado.stock[pdv] || 0) + qty;
+  } else if (tipo === 'venta') {
+    estado.stock[pdv] = Math.max(0, (estado.stock[pdv] || 0) - qty);
+  } else if (tipo === 'ajuste') {
+    estado.stock[pdv] = qty; // ajuste pone el valor exacto
+  }
+
+  mov.stockDespues = estado.stock[pdv];
+  estado.movimientos.push(mov);
+  guardarEstado();
+
+  // Enviar al Google Sheet si hay webhook
+  if (estado.webhookURL) {
+    try {
+      await fetch(estado.webhookURL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(mov),
+      });
+    } catch(e) {
+      console.warn('Webhook error:', e);
+    }
+  }
+
+  // Reset form
+  document.getElementById('sel-pdv').value = '';
+  document.getElementById('inp-cantidad').value = '';
+  document.getElementById('inp-notas').value = '';
+  document.getElementById('nota-calculo').innerHTML = '';
+
+  btn.disabled = false;
+  btnText.style.display = 'inline';
+  spinner.style.display = 'none';
+
+  // Verificar alerta de stock
+  const stockNuevo = estado.stock[pdv];
+  if (stockNuevo <= UMBRAL_ALERTA && stockNuevo > 0) {
+    showToast(`✅ Registrado · ⚠️ ${PDV_LIST.find(p=>p.id===pdv)?.nombre}: solo ${stockNuevo}u`);
+  } else if (stockNuevo === 0) {
+    showToast(`✅ Registrado · 🚨 ${PDV_LIST.find(p=>p.id===pdv)?.nombre}: AGOTADO`, true);
+  } else {
+    showToast('✅ Movimiento registrado correctamente');
+  }
+
+  // Volver al dashboard
+  setTimeout(() => {
+    showTab('dashboard');
+    document.querySelector('.nav-tab').classList.add('active');
+    document.querySelectorAll('.nav-tab').forEach((t,i) => { if(i!==0) t.classList.remove('active'); });
+    document.getElementById('screen-registrar').classList.remove('active');
+    document.getElementById('screen-dashboard').classList.add('active');
+  }, 1200);
+}
+
+// ═══════════════════════════════════════════
+// HISTORIAL
+// ═══════════════════════════════════════════
+function historialItemHTML(m) {
+  const iconos = { entrega:'📦', venta:'💰', reposicion:'🔄', ajuste:'✏️' };
+  const colores = { entrega:'entrega', venta:'venta', reposicion:'entrega', ajuste:'alerta' };
+  const fecha = new Date(m.fecha);
+  const hora = fecha.toLocaleTimeString('es-EC', { hour:'2-digit', minute:'2-digit' });
+  const dia = fecha.toLocaleDateString('es-EC', { day:'2-digit', month:'short' });
+  const signo = m.tipo === 'venta' ? '-' : m.tipo === 'entrega' ? '+' : '';
+  const color = m.tipo === 'venta' ? '#1D4ED8' : m.tipo === 'entrega' ? '#25D366' : '#F59E0B';
+  return `
+    <div class="historial-item">
+      <div class="hist-icon ${colores[m.tipo]||'entrega'}">${iconos[m.tipo]||'📦'}</div>
+      <div class="hist-info">
+        <div class="hist-pdv">${m.pdvNombre || m.pdv}</div>
+        <div class="hist-det">${m.tipo.charAt(0).toUpperCase()+m.tipo.slice(1)} · Stock: ${m.stockAntes}→${m.stockDespues}u${m.notas?' · '+m.notas:''}</div>
+      </div>
+      <div class="hist-meta">
+        <div class="hist-qty" style="color:${color}">${signo}${m.cantidad}u</div>
+        <div class="hist-time">${dia} ${hora}</div>
+      </div>
+    </div>`;
+}
+
+function renderHistorial() {
+  const list = document.getElementById('historial-list');
+  if (estado.movimientos.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-s);font-size:13px">Sin movimientos aún.</div>';
+    return;
+  }
+  list.innerHTML = [...estado.movimientos].reverse().map(historialItemHTML).join('');
+}
+
+// ═══════════════════════════════════════════
+// LIQUIDACIÓN
+// ═══════════════════════════════════════════
+function renderLiquidacion() {
+  const ventas = estado.movimientos.filter(m => m.tipo === 'venta');
+  const totalUnidades = ventas.reduce((a,m) => a+m.cantidad, 0);
+  const totalCobrado = totalUnidades * PVP;
+  const comPDV = totalUnidades * BASE_SIN_IVA * COMISION_PDV;
+  const saldoBruto = totalCobrado - comPDV;
+  const comAriana = saldoBruto * COMISION_ARIANA;
+  const totalDepositar = saldoBruto - comAriana;
+  const costoFabrica = totalUnidades * COSTO_FABRICA;
+  const costoLog = totalUnidades * LOGISTICA;
+  const utilidad = totalDepositar - costoFabrica - costoLog;
+  const grucsa50 = Math.max(0, utilidad * 0.5);
+  const dawua50 = Math.max(0, utilidad * 0.5);
+
+  const $ = v => '$' + Math.abs(v).toFixed(2);
+
+  document.getElementById('liq-resumen').innerHTML = `
+    <div class="liq-row"><span>Total unidades vendidas</span><span class="liq-val">${totalUnidades}u</span></div>
+    <div class="liq-row"><span>Total cobrado a turistas</span><span class="liq-val">${$(totalCobrado)}</span></div>
+    <div class="liq-row"><span>— Comisión PDV 20% (pagada)</span><span class="liq-val" style="color:var(--amber)">-${$(comPDV)}</span></div>
+    <div class="liq-row"><span>Saldo bruto en mano Ariana</span><span class="liq-val">${$(saldoBruto)}</span></div>
+    <div class="liq-row"><span>— Comisión Ariana 10%</span><span class="liq-val" style="color:var(--amber)">-${$(comAriana)}</span></div>
+    <div class="liq-row total"><span>TOTAL A DEPOSITAR A DAWUA</span><span class="liq-val">${$(totalDepositar)}</span></div>
+    <div style="height:8px"></div>
+    <div class="liq-row" style="color:var(--text-s)"><span>— Costo fábrica DAWUA</span><span class="liq-val">-${$(costoFabrica)}</span></div>
+    <div class="liq-row" style="color:var(--text-s)"><span>— Logística</span><span class="liq-val">-${$(costoLog)}</span></div>
+    <div class="liq-row total"><span>UTILIDAD NETA</span><span class="liq-val">${$(Math.max(0,utilidad))}</span></div>
+    <div class="liq-row grucsa"><span>GRUCSA 50%</span><span class="liq-val" style="color:var(--azul)">${$(grucsa50)}</span></div>
+    <div class="liq-row total"><span>DAWUA 50%</span><span class="liq-val">${$(dawua50)}</span></div>`;
+}
+
+function exportarLiquidacion() {
+  showToast('Próximamente: exportar a PDF o WhatsApp');
+}
+
+// ═══════════════════════════════════════════
+// INSTRUCCIONES Y CONEXIÓN
+// ═══════════════════════════════════════════
+const APPS_SCRIPT = `function doPost(e) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet()
+    .getSheetByName("RegistroBot");
+  const data = JSON.parse(e.postData.contents);
+  sheet.appendRow([
+    new Date(data.fecha),
+    data.tipo,
+    data.pdvNombre,
+    data.cantidad,
+    data.precio || 0,
+    data.stockAntes,
+    data.stockDespues,
+    data.notas || "",
+  ]);
+  return ContentService
+    .createTextOutput(JSON.stringify({status:"ok"}))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doGet(e) {
+  return ContentService
+    .createTextOutput(JSON.stringify({status:"ok",msg:"DAWUA 593IA activo"}))
+    .setMimeType(ContentService.MimeType.JSON);
+}`;
+
+function renderInstrucciones() {
+  document.getElementById('apps-script-code').textContent = APPS_SCRIPT;
+  const saved = localStorage.getItem('dawua_webhook');
+  if (saved) document.getElementById('inp-webhook').value = saved;
+}
+
+function copiarScript() {
+  navigator.clipboard.writeText(APPS_SCRIPT).then(() => {
+    showToast('✅ Código copiado al portapapeles');
+  }).catch(() => {
+    showToast('Selecciona el código manualmente y cópialo', true);
+  });
+}
+
+function guardarWebhook() {
+  const url = document.getElementById('inp-webhook').value.trim();
+  if (!url || !url.startsWith('https://')) {
+    showToast('URL inválida. Debe empezar con https://', true);
+    return;
+  }
+  estado.webhookURL = url;
+  localStorage.setItem('dawua_webhook', url);
+  showToast('✅ URL guardada. Ya puedes registrar movimientos.');
+}
+
+async function probarConexion() {
+  const url = estado.webhookURL || localStorage.getItem('dawua_webhook');
+  const result = document.getElementById('test-result');
+  result.style.display = 'block';
+  result.innerHTML = '<span style="color:var(--text-s)">Probando conexión...</span>';
+
+  if (!url) {
+    result.innerHTML = '<span style="color:var(--rojo)">⚠️ Primero guarda la URL del Apps Script.</span>';
+    return;
+  }
+
+  try {
+    await fetch(url, { method: 'GET', mode: 'no-cors' });
+    result.innerHTML = '<span style="color:var(--verde)">✅ Conexión establecida. El Sheet está recibiendo datos.</span>';
+  } catch(e) {
+    result.innerHTML = '<span style="color:var(--amber)">⚠️ No se pudo verificar (normal en modo no-cors). Intenta registrar un movimiento de prueba.</span>';
+  }
+}
+
+// ═══════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════
+let toastTimer;
+function showToast(msg, error=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (error?' error':'');
+  clearTimeout(toastTimer);
+  setTimeout(() => t.classList.add('show'), 10);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+cargarEstado();
+renderDashboard();
+</script>
+</body>
+</html>
