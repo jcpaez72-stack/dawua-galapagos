@@ -5,528 +5,344 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#064E47">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>DAWUA · Inventario Galápagos</title>
+<title>DAWUA · Galápagos · 593IA</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-/* ── RESET ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html{height:100%;height:-webkit-fill-available;scroll-behavior:smooth}
-body{
-  font-family:'Plus Jakarta Sans',sans-serif;
-  background:#F2EFE9;
-  color:#1A1A1A;
-  min-height:100vh;
-  min-height:-webkit-fill-available;
-  padding-bottom:env(safe-area-inset-bottom,0px);
-}
-
-/* ── TOKENS ── */
+html,body{height:100%;height:-webkit-fill-available;font-family:'Plus Jakarta Sans',sans-serif;background:#F2EFE9;color:#1A1A1A;overflow:hidden}
 :root{
-  --verde:#064E47;
-  --verde-med:#075E54;
-  --verde-brt:#25D366;
-  --verde-clr:#D1FAE5;
-  --verde-lgt:#F0FDF4;
-  --amber:#F59E0B;
-  --amber-clr:#FEF3C7;
-  --rojo:#EF4444;
-  --rojo-clr:#FEE2E2;
-  --azul:#1D4ED8;
-  --bg:#F2EFE9;
-  --surface:#FFFFFF;
-  --border:#E2DDD6;
-  --text:#1A1A1A;
-  --text-s:#6B7280;
-  --radius:14px;
-  --shadow:0 2px 12px rgba(6,78,71,0.08);
+  --v:#064E47;--vm:#075E54;--vb:#25D366;--vc:#D1FAE5;--vl:#F0FDF4;
+  --am:#F59E0B;--ac:#FEF3C7;--rd:#EF4444;--rc:#FEE2E2;
+  --az:#1D4ED8;--azc:#DBEAFE;
+  --bg:#F2EFE9;--sf:#FFFFFF;--bd:#E2DDD6;--ts:#6B7280;
 }
 
 /* ── HEADER ── */
-.app-header{
-  background:var(--verde);
-  padding:max(env(safe-area-inset-top,0px),16px) 20px 16px;
-  display:flex;align-items:center;gap:12px;
-  position:sticky;top:0;z-index:50;
-}
-.logo{
-  width:38px;height:38px;border-radius:10px;
-  background:linear-gradient(135deg,#0A6E5F,#25D366);
-  display:flex;align-items:center;justify-content:center;
-  font-size:18px;flex-shrink:0;
-}
-.header-info{flex:1}
-.header-title{color:#fff;font-size:16px;font-weight:800;letter-spacing:-.3px}
-.header-sub{color:rgba(255,255,255,.55);font-size:11px;margin-top:1px;font-family:'JetBrains Mono',monospace}
-.online-badge{
-  background:rgba(37,211,102,.2);border:1px solid rgba(37,211,102,.4);
-  border-radius:20px;padding:3px 10px;
-  color:#4ADE80;font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;
-  display:flex;align-items:center;gap:5px;flex-shrink:0;
-}
-.online-dot{width:6px;height:6px;border-radius:50%;background:#4ADE80;animation:pulse 2s infinite}
+.hdr{background:var(--v);padding:max(env(safe-area-inset-top,0px),14px) 16px 12px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50}
+.hdr-logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#0A6E5F,#25D366);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.hdr-info{flex:1}
+.hdr-title{color:#fff;font-size:15px;font-weight:800}
+.hdr-sub{color:rgba(255,255,255,.5);font-size:10px;font-family:'JetBrains Mono',monospace}
+.hdr-badge{background:rgba(37,211,102,.2);border:1px solid rgba(37,211,102,.4);border-radius:20px;padding:3px 9px;color:#4ADE80;font-size:9px;font-weight:700;font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:4px;flex-shrink:0}
+.hdr-dot{width:5px;height:5px;border-radius:50%;background:#4ADE80;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* ── NAV TABS ── */
-.nav-tabs{
-  background:var(--verde-med);
-  display:flex;padding:0 16px;gap:4px;
-  overflow-x:auto;scrollbar-width:none;
-}
-.nav-tabs::-webkit-scrollbar{display:none}
-.nav-tab{
-  padding:10px 14px;font-size:12px;font-weight:600;color:rgba(255,255,255,.55);
-  cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;
-  transition:all .2s;background:none;border:none;font-family:inherit;
-  border-bottom:2px solid transparent;
-}
-.nav-tab.active{color:#fff;border-bottom-color:var(--verde-brt)}
+/* ── NAV ── */
+.nav{background:var(--vm);display:flex;overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav-btn{padding:9px 13px;font-size:11px;font-weight:600;color:rgba(255,255,255,.5);cursor:pointer;border:none;background:none;font-family:inherit;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s}
+.nav-btn.on{color:#fff;border-bottom-color:var(--vb)}
 
 /* ── MAIN ── */
-.main{padding:16px;max-width:480px;margin:0 auto}
+.main{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px;height:calc(100vh - 100px);height:calc(100dvh - 100px)}
+.screen{display:none}.screen.on{display:block}
 
 /* ── CARDS ── */
-.card{
-  background:var(--surface);border-radius:var(--radius);
-  padding:18px;margin-bottom:14px;box-shadow:var(--shadow);
-  border:1px solid var(--border);
-}
-.card-title{
-  font-size:13px;font-weight:700;color:var(--verde);
-  text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px;
-  display:flex;align-items:center;gap:8px;
-}
-.card-title::before{content:'';width:3px;height:16px;background:var(--verde-brt);border-radius:2px;flex-shrink:0}
-
-/* ── STOCK SEMÁFORO ── */
-.stock-grid{display:flex;flex-direction:column;gap:8px}
-.stock-item{
-  display:flex;align-items:center;gap:12px;
-  padding:12px 14px;border-radius:10px;border:1px solid var(--border);
-  background:var(--bg);
-}
-.stock-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.stock-dot.ok{background:#25D366}
-.stock-dot.warn{background:var(--amber)}
-.stock-dot.danger{background:var(--rojo);animation:blink .8s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
-.stock-pdv{flex:1;font-size:13px;font-weight:600}
-.stock-units{font-size:22px;font-weight:800;font-family:'JetBrains Mono',monospace;min-width:40px;text-align:right}
-.stock-units.ok{color:#25D366}
-.stock-units.warn{color:var(--amber)}
-.stock-units.danger{color:var(--rojo)}
-.stock-bar{height:4px;background:#E5E7EB;border-radius:2px;margin-top:5px;overflow:hidden}
-.stock-bar-fill{height:100%;border-radius:2px;transition:width .5s}
-
-/* ── FORMULARIO ── */
-.form-group{margin-bottom:14px}
-label{display:block;font-size:12px;font-weight:700;color:var(--text-s);
-  text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
-select,input[type="number"],input[type="text"]{
-  width:100%;padding:13px 14px;border-radius:10px;
-  border:1.5px solid var(--border);background:var(--bg);
-  font-size:15px;font-family:inherit;color:var(--text);
-  appearance:none;-webkit-appearance:none;outline:none;
-  transition:border-color .2s,box-shadow .2s;
-}
-select:focus,input:focus{
-  border-color:var(--verde-med);
-  box-shadow:0 0 0 3px rgba(7,94,84,.1);
-}
-.tipo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
-.tipo-btn{
-  padding:14px 10px;border-radius:10px;border:1.5px solid var(--border);
-  background:var(--bg);font-size:13px;font-weight:600;color:var(--text-s);
-  cursor:pointer;text-align:center;transition:all .15s;font-family:inherit;
-}
-.tipo-btn.active{
-  border-color:var(--verde-med);background:var(--verde-lgt);color:var(--verde);
-}
-.tipo-icon{font-size:22px;display:block;margin-bottom:4px}
-
-/* ── BOTÓN PRINCIPAL ── */
-.btn-primary{
-  width:100%;padding:16px;border-radius:12px;
-  background:linear-gradient(135deg,var(--verde-med),#0A9B6B);
-  color:#fff;font-size:16px;font-weight:800;font-family:inherit;
-  border:none;cursor:pointer;letter-spacing:-.2px;
-  box-shadow:0 4px 18px rgba(7,94,84,.35);
-  transition:transform .15s,box-shadow .15s;
-  display:flex;align-items:center;justify-content:center;gap:8px;
-}
-.btn-primary:active{transform:scale(.97);box-shadow:0 2px 8px rgba(7,94,84,.2)}
-.btn-primary:disabled{background:#ccc;box-shadow:none;cursor:default}
-
-/* ── NOTAS ── */
-.nota{
-  font-size:12px;color:var(--verde);background:var(--verde-lgt);
-  border:1px solid #A7F3D0;border-radius:8px;padding:10px 12px;
-  margin-top:10px;line-height:1.5;
-}
-
-/* ── HISTORIAL ── */
-.historial-item{
-  display:flex;align-items:flex-start;gap:10px;
-  padding:12px 0;border-bottom:1px solid var(--border);
-}
-.historial-item:last-child{border-bottom:none}
-.hist-icon{
-  width:34px;height:34px;border-radius:9px;display:flex;align-items:center;
-  justify-content:center;font-size:15px;flex-shrink:0;margin-top:2px;
-}
-.hist-icon.entrega{background:#D1FAE5}
-.hist-icon.venta{background:#DBEAFE}
-.hist-icon.alerta{background:#FEE2E2}
-.hist-info{flex:1}
-.hist-pdv{font-size:13px;font-weight:700}
-.hist-det{font-size:12px;color:var(--text-s);margin-top:2px}
-.hist-meta{text-align:right;flex-shrink:0}
-.hist-qty{font-size:16px;font-weight:800;font-family:'JetBrains Mono',monospace}
-.hist-time{font-size:10px;color:var(--text-s);margin-top:2px;font-family:'JetBrains Mono',monospace}
-
-/* ── TOAST ── */
-.toast{
-  position:fixed;bottom:max(env(safe-area-inset-bottom,16px),16px);
-  left:50%;transform:translateX(-50%) translateY(100px);
-  background:var(--verde);color:#fff;border-radius:12px;
-  padding:14px 22px;font-size:14px;font-weight:700;
-  box-shadow:0 8px 32px rgba(6,78,71,.4);z-index:999;
-  transition:transform .35s cubic-bezier(.34,1.56,.64,1);
-  white-space:nowrap;display:flex;align-items:center;gap:8px;
-}
-.toast.show{transform:translateX(-50%) translateY(0)}
-.toast.error{background:var(--rojo)}
-
-/* ── ALERTA CRÍTICA ── */
-.alerta-box{
-  background:var(--rojo-clr);border:1.5px solid var(--rojo);
-  border-radius:10px;padding:12px 14px;margin-bottom:8px;
-}
-.alerta-title{font-size:13px;font-weight:800;color:var(--rojo);margin-bottom:2px}
-.alerta-det{font-size:12px;color:#7F1D1D}
+.card{background:var(--sf);border-radius:14px;padding:16px;margin-bottom:12px;border:1px solid var(--bd);box-shadow:0 2px 8px rgba(6,78,71,.06)}
+.card-title{font-size:12px;font-weight:700;color:var(--v);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.card-title::before{content:'';width:3px;height:14px;background:var(--vb);border-radius:2px;flex-shrink:0}
 
 /* ── KPIs ── */
-.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
-.kpi-box{
-  background:var(--surface);border-radius:12px;padding:14px;
-  border:1px solid var(--border);box-shadow:var(--shadow);text-align:center;
-}
-.kpi-val{font-size:26px;font-weight:800;color:var(--verde);font-family:'JetBrains Mono',monospace}
-.kpi-lbl{font-size:11px;color:var(--text-s);margin-top:3px}
-.kpi-box.amber .kpi-val{color:var(--amber)}
-.kpi-box.azul .kpi-val{color:var(--azul)}
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.kpi{background:var(--sf);border-radius:12px;padding:13px;border:1px solid var(--bd);text-align:center}
+.kpi-val{font-size:24px;font-weight:800;color:var(--v);font-family:'JetBrains Mono',monospace}
+.kpi-lbl{font-size:10px;color:var(--ts);margin-top:2px}
+.kpi.am .kpi-val{color:var(--am)}
+.kpi.az .kpi-val{color:var(--az)}
+
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:32px 16px}
+.empty-ico{font-size:40px;margin-bottom:10px}
+.empty-txt{font-size:13px;color:var(--ts);line-height:1.6}
+.empty-btn{margin-top:14px;display:inline-block;background:var(--v);color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:inherit}
+
+/* ── PDV LIST ── */
+.pdv-item{display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;border:1px solid var(--bd);margin-bottom:8px;background:var(--bg);cursor:pointer;transition:all .15s}
+.pdv-item:active{background:var(--vc)}
+.pdv-avatar{width:40px;height:40px;border-radius:10px;background:var(--v);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.pdv-info{flex:1;min-width:0}
+.pdv-name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pdv-type{font-size:11px;color:var(--ts);margin-top:1px}
+.pdv-stock{text-align:right;flex-shrink:0}
+.pdv-stock-num{font-size:18px;font-weight:800;font-family:'JetBrains Mono',monospace}
+.pdv-stock-num.ok{color:var(--vb)}
+.pdv-stock-num.warn{color:var(--am)}
+.pdv-stock-num.danger{color:var(--rd)}
+.pdv-stock-lbl{font-size:9px;color:var(--ts)}
+
+/* ── BADGE ── */
+.badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px}
+.badge-ok{background:var(--vc);color:var(--v)}
+.badge-warn{background:var(--ac);color:#92400E}
+.badge-danger{background:var(--rc);color:var(--rd)}
+
+/* ── FORMS ── */
+.form-group{margin-bottom:12px}
+label{display:block;font-size:11px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px}
+input[type=text],input[type=number],input[type=tel],select,textarea{width:100%;padding:12px 13px;border-radius:10px;border:1.5px solid var(--bd);background:var(--bg);font-size:14px;font-family:inherit;color:#1A1A1A;outline:none;transition:border-color .2s,box-shadow .2s;-webkit-appearance:none;appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--vm);box-shadow:0 0 0 3px rgba(7,94,84,.1)}
+textarea{min-height:70px;resize:none}
+
+/* ── TIPO SELECTOR ── */
+.tipo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.tipo-btn{padding:13px 8px;border-radius:10px;border:1.5px solid var(--bd);background:var(--bg);font-size:12px;font-weight:600;color:var(--ts);cursor:pointer;text-align:center;transition:all .15s;font-family:inherit}
+.tipo-btn.on{border-color:var(--vm);background:var(--vl);color:var(--v)}
+.tipo-ico{font-size:20px;display:block;margin-bottom:3px}
+
+/* ── BUTTONS ── */
+.btn{width:100%;padding:14px;border-radius:12px;font-size:15px;font-weight:800;font-family:inherit;border:none;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:linear-gradient(135deg,var(--vm),#0A9B6B);color:#fff;box-shadow:0 4px 16px rgba(7,94,84,.3);margin-top:14px}
+.btn-primary:disabled{background:#ccc;box-shadow:none}
+.btn-danger{background:var(--rc);color:var(--rd);margin-top:8px}
+.btn-sec{background:var(--bg);color:var(--v);border:1.5px solid var(--v);margin-top:8px}
+
+/* ── NOTA CALCULO ── */
+.nota{font-size:12px;color:var(--v);background:var(--vl);border:1px solid #A7F3D0;border-radius:8px;padding:10px 12px;margin-top:8px;line-height:1.5;display:none}
+.nota.show{display:block}
+
+/* ── HISTORIAL ── */
+.mov-item{display:flex;align-items:flex-start;gap:10px;padding:11px 0;border-bottom:1px solid var(--bd)}
+.mov-item:last-child{border-bottom:none}
+.mov-ico{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;margin-top:1px}
+.mov-ico.entrega{background:var(--vc)}
+.mov-ico.venta{background:var(--azc)}
+.mov-ico.alerta{background:var(--rc)}
+.mov-info{flex:1}
+.mov-pdv{font-size:13px;font-weight:700}
+.mov-det{font-size:11px;color:var(--ts);margin-top:2px}
+.mov-right{text-align:right;flex-shrink:0}
+.mov-qty{font-size:15px;font-weight:800;font-family:'JetBrains Mono',monospace}
+.mov-time{font-size:9px;color:var(--ts);margin-top:2px;font-family:'JetBrains Mono',monospace}
 
 /* ── LIQUIDACIÓN ── */
-.liq-row{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;
-}
+.liq-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bd);font-size:13px}
 .liq-row:last-child{border-bottom:none}
-.liq-row.total{font-weight:800;color:var(--verde);font-size:14px;padding-top:12px}
-.liq-row.grucsa{font-weight:700;color:var(--azul)}
+.liq-row.total{font-weight:800;color:var(--v);font-size:14px;padding-top:10px}
+.liq-row.grucsa{font-weight:700;color:var(--az)}
 .liq-val{font-family:'JetBrains Mono',monospace;font-weight:700}
 
-/* ── INSTRUCCIONES ── */
-.step-block{
-  display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);
-}
-.step-block:last-child{border-bottom:none}
-.step-num{
-  width:28px;height:28px;border-radius:50%;background:var(--verde);
-  color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;
-  justify-content:center;flex-shrink:0;margin-top:1px;
-}
-.step-info{flex:1}
-.step-title{font-size:13px;font-weight:700;margin-bottom:3px}
-.step-det{font-size:12px;color:var(--text-s);line-height:1.5}
-.code-block{
-  background:#1A1A1A;color:#4ADE80;border-radius:8px;padding:10px 12px;
-  font-family:'JetBrains Mono',monospace;font-size:11px;margin-top:8px;
-  overflow-x:auto;white-space:nowrap;
-}
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
+.modal-overlay.show{opacity:1;pointer-events:all}
+.modal{background:var(--sf);border-radius:20px 20px 0 0;padding:20px 16px max(env(safe-area-inset-bottom,16px),16px);width:100%;max-width:480px;transform:translateY(100%);transition:transform .3s cubic-bezier(.34,1.2,.64,1)}
+.modal-overlay.show .modal{transform:translateY(0)}
+.modal-title{font-size:16px;font-weight:800;color:var(--v);margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.modal-close{font-size:20px;cursor:pointer;color:var(--ts);background:none;border:none;padding:4px}
 
-/* ── SCREEN STATES ── */
-.screen{display:none}
-.screen.active{display:block}
+/* ── TOAST ── */
+.toast{position:fixed;bottom:max(env(safe-area-inset-bottom,16px),16px);left:50%;transform:translateX(-50%) translateY(100px);background:var(--v);color:#fff;border-radius:12px;padding:13px 20px;font-size:13px;font-weight:700;box-shadow:0 8px 24px rgba(6,78,71,.4);z-index:999;transition:transform .3s cubic-bezier(.34,1.56,.64,1);white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.err{background:var(--rd)}
 
-/* ── SPINNER ── */
-.spinner{
-  width:20px;height:20px;border:2px solid rgba(255,255,255,.3);
-  border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;
-}
-@keyframes spin{to{transform:rotate(360deg)}}
+/* ── ALERTA ── */
+.alerta-box{background:var(--rc);border:1.5px solid var(--rd);border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.alerta-title{font-size:13px;font-weight:800;color:var(--rd);margin-bottom:2px}
+.alerta-det{font-size:12px;color:#7F1D1D}
 </style>
 </head>
 <body>
 
 <!-- HEADER -->
-<div class="app-header">
-  <div class="logo">🌿</div>
-  <div class="header-info">
-    <div class="header-title">DAWUA Galápagos</div>
-    <div class="header-sub">593IA · Inventario Santa Cruz</div>
+<div class="hdr">
+  <div class="hdr-logo">🌿</div>
+  <div class="hdr-info">
+    <div class="hdr-title">DAWUA Galápagos</div>
+    <div class="hdr-sub">593IA · Ariana Páez · Santa Cruz</div>
   </div>
-  <div class="online-badge">
-    <div class="online-dot"></div>
-    ACTIVO
-  </div>
+  <div class="hdr-badge"><div class="hdr-dot"></div>ACTIVO</div>
 </div>
 
 <!-- NAV -->
-<div class="nav-tabs">
-  <button class="nav-tab active" onclick="showTab('dashboard')">📊 Dashboard</button>
-  <button class="nav-tab" onclick="showTab('registrar')">➕ Registrar</button>
-  <button class="nav-tab" onclick="showTab('historial')">📋 Historial</button>
-  <button class="nav-tab" onclick="showTab('liquidacion')">💰 Liquidación</button>
-  <button class="nav-tab" onclick="showTab('instrucciones')">⚙️ Configurar</button>
+<div class="nav">
+  <button class="nav-btn on" onclick="tab('dashboard',this)">📊 Inicio</button>
+  <button class="nav-btn" onclick="tab('pdvs',this)">🏪 PDVs</button>
+  <button class="nav-btn" onclick="tab('registrar',this)">➕ Registrar</button>
+  <button class="nav-btn" onclick="tab('historial',this)">📋 Historial</button>
+  <button class="nav-btn" onclick="tab('liquidacion',this)">💰 Liquidación</button>
+  <button class="nav-btn" onclick="tab('config',this)">⚙️ Config</button>
 </div>
 
 <!-- MAIN -->
 <div class="main">
 
-  <!-- ══ DASHBOARD ══ -->
-  <div id="screen-dashboard" class="screen active">
-
-    <!-- Alertas críticas -->
-    <div id="alertas-container"></div>
-
-    <!-- KPIs -->
+  <!-- ═══ DASHBOARD ═══ -->
+  <div id="s-dashboard" class="screen on">
+    <div id="alertas"></div>
     <div class="kpi-grid">
-      <div class="kpi-box">
-        <div class="kpi-val" id="kpi-vendidas">0</div>
-        <div class="kpi-lbl">Unidades vendidas</div>
-      </div>
-      <div class="kpi-box">
-        <div class="kpi-val" id="kpi-stock">50</div>
-        <div class="kpi-lbl">Stock total isla</div>
-      </div>
-      <div class="kpi-box amber">
-        <div class="kpi-val" id="kpi-ingresos">$0</div>
-        <div class="kpi-lbl">Ingresos brutos</div>
-      </div>
-      <div class="kpi-box azul">
-        <div class="kpi-val" id="kpi-utilidad">$0</div>
-        <div class="kpi-lbl">Utilidad neta (50% c/u)</div>
-      </div>
+      <div class="kpi"><div class="kpi-val" id="k-stock">0</div><div class="kpi-lbl">Stock Ariana (u)</div></div>
+      <div class="kpi"><div class="kpi-val" id="k-pdvs">0</div><div class="kpi-lbl">PDVs activos</div></div>
+      <div class="kpi am"><div class="kpi-val" id="k-vendidas">0</div><div class="kpi-lbl">Unidades vendidas</div></div>
+      <div class="kpi az"><div class="kpi-val" id="k-ingresos">$0</div><div class="kpi-lbl">Ingresos brutos</div></div>
     </div>
-
-    <!-- Stock semáforo -->
     <div class="card">
-      <div class="card-title">Stock por punto de venta</div>
-      <div class="stock-grid" id="stock-grid"></div>
+      <div class="card-title">Stock por PDV</div>
+      <div id="stock-pdvs">
+        <div class="empty"><div class="empty-ico">🏪</div><div class="empty-txt">Aún no hay puntos de venta registrados.<br>Ve a la pestaña PDVs para crear el primero.</div><button class="empty-btn" onclick="tab('pdvs',document.querySelectorAll('.nav-btn')[1])">Crear primer PDV</button></div>
+      </div>
     </div>
-
-    <!-- Última actividad -->
     <div class="card">
       <div class="card-title">Última actividad</div>
-      <div id="ultima-actividad">
-        <div style="text-align:center;padding:20px;color:var(--text-s);font-size:13px">
-          Sin movimientos aún. Registra el primer movimiento ➕
-        </div>
-      </div>
+      <div id="ultima-act"><div style="text-align:center;padding:16px;color:var(--ts);font-size:13px">Sin movimientos aún</div></div>
     </div>
-
   </div>
 
-  <!-- ══ REGISTRAR ══ -->
-  <div id="screen-registrar" class="screen">
+  <!-- ═══ PDVs ═══ -->
+  <div id="s-pdvs" class="screen">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div style="font-size:14px;font-weight:700;color:var(--v)">Puntos de Venta</div>
+      <button onclick="abrirModalPDV()" style="background:var(--v);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">+ Nuevo PDV</button>
+    </div>
+    <div id="lista-pdvs">
+      <div class="empty"><div class="empty-ico">🏪</div><div class="empty-txt">No hay PDVs registrados aún.<br>Crea el primero cuando consigas un punto de venta.</div><button class="empty-btn" onclick="abrirModalPDV()">+ Crear PDV</button></div>
+    </div>
+  </div>
 
+  <!-- ═══ REGISTRAR ═══ -->
+  <div id="s-registrar" class="screen">
     <div class="card">
       <div class="card-title">Tipo de movimiento</div>
       <div class="tipo-grid">
-        <button class="tipo-btn active" onclick="selectTipo('entrega',this)">
-          <span class="tipo-icon">📦</span>Entrega a PDV
-        </button>
-        <button class="tipo-btn" onclick="selectTipo('venta',this)">
-          <span class="tipo-icon">💰</span>Venta reportada
-        </button>
-        <button class="tipo-btn" onclick="selectTipo('reposicion',this)">
-          <span class="tipo-icon">🔄</span>Reposición
-        </button>
-        <button class="tipo-btn" onclick="selectTipo('ajuste',this)">
-          <span class="tipo-icon">✏️</span>Ajuste
-        </button>
+        <button class="tipo-btn on" onclick="selTipo('entrega',this)"><span class="tipo-ico">📦</span>Entrega a PDV</button>
+        <button class="tipo-btn" onclick="selTipo('venta',this)"><span class="tipo-ico">💰</span>Venta reportada</button>
+        <button class="tipo-btn" onclick="selTipo('devolucion',this)"><span class="tipo-ico">↩️</span>Devolución</button>
+        <button class="tipo-btn" onclick="selTipo('ajuste',this)"><span class="tipo-ico">✏️</span>Ajuste stock</button>
       </div>
     </div>
-
     <div class="card">
-      <div class="card-title">Detalle del movimiento</div>
-
+      <div class="card-title">Detalle</div>
       <div class="form-group">
         <label>Punto de venta</label>
-        <select id="sel-pdv">
-          <option value="">Selecciona el PDV...</option>
-          <option value="Finch Bay">🏨 Hotel Finch Bay</option>
-          <option value="Ikala">🏨 Hotel Ikala Galápagos</option>
-          <option value="Red Mangrove">🏨 Red Mangrove Lodge</option>
-          <option value="Royal Palm">🏨 Royal Palm Hilton</option>
-          <option value="Malecon">🛍️ Tienda Malecón #1</option>
-        </select>
+        <select id="sel-pdv"><option value="">Selecciona un PDV...</option></select>
+        <div style="font-size:11px;color:var(--ts);margin-top:4px">¿No está el PDV? <span style="color:var(--v);font-weight:700;cursor:pointer" onclick="abrirModalPDV()">Créalo aquí</span></div>
       </div>
-
+      <div class="form-group" id="grp-ariana" style="display:none">
+        <label>Stock disponible en Ariana</label>
+        <div style="font-size:20px;font-weight:800;color:var(--v);font-family:'JetBrains Mono',monospace" id="stock-ariana-disp">0 unidades</div>
+      </div>
       <div class="form-group">
         <label>Cantidad (unidades)</label>
-        <input type="number" id="inp-cantidad" placeholder="0" min="0" max="50" inputmode="numeric">
+        <input type="number" id="inp-qty" placeholder="0" min="1" inputmode="numeric" oninput="calcNota()">
       </div>
-
-      <div class="form-group" id="grupo-precio" style="display:none">
+      <div class="form-group" id="grp-precio" style="display:none">
         <label>Precio por unidad ($)</label>
         <input type="number" id="inp-precio" value="14.99" step="0.01" inputmode="decimal">
       </div>
-
       <div class="form-group">
         <label>Notas (opcional)</label>
-        <input type="text" id="inp-notas" placeholder="Ej: entregué en recepción con María">
+        <input type="text" id="inp-notas" placeholder="Ej: entregué en recepción">
       </div>
-
-      <div class="nota" id="nota-calculo"></div>
-
-      <div style="margin-top:16px">
-        <button class="btn-primary" id="btn-registrar" onclick="registrarMovimiento()">
-          <span id="btn-text">✓ Registrar movimiento</span>
-          <div class="spinner" id="btn-spinner" style="display:none"></div>
-        </button>
-      </div>
+      <div class="nota" id="nota-calc"></div>
+      <button class="btn btn-primary" onclick="registrar()">✓ Registrar movimiento</button>
     </div>
-
   </div>
 
-  <!-- ══ HISTORIAL ══ -->
-  <div id="screen-historial" class="screen">
+  <!-- ═══ HISTORIAL ═══ -->
+  <div id="s-historial" class="screen">
     <div class="card">
       <div class="card-title">Todos los movimientos</div>
-      <div id="historial-list">
-        <div style="text-align:center;padding:20px;color:var(--text-s);font-size:13px">
-          Sin movimientos aún.
-        </div>
-      </div>
+      <div id="lista-historial"><div style="text-align:center;padding:20px;color:var(--ts);font-size:13px">Sin movimientos aún.</div></div>
     </div>
   </div>
 
-  <!-- ══ LIQUIDACIÓN ══ -->
-  <div id="screen-liquidacion" class="screen">
-
+  <!-- ═══ LIQUIDACIÓN ═══ -->
+  <div id="s-liquidacion" class="screen">
     <div class="card">
-      <div class="card-title">Resumen para liquidar a DAWUA</div>
-
+      <div class="card-title">Resumen quincenal</div>
       <div class="form-group">
         <label>Período</label>
         <select id="sel-periodo">
+          <option>Quincena actual</option>
           <option>Quincena 1 · Jul 1–15</option>
           <option>Quincena 2 · Jul 16–31</option>
           <option>Quincena 3 · Ago 1–15</option>
+          <option>Quincena 4 · Ago 16–31</option>
         </select>
       </div>
-
-      <div id="liq-resumen"></div>
-
-      <div style="margin-top:16px">
-        <button class="btn-primary" onclick="exportarLiquidacion()">
-          📤 Exportar resumen
-        </button>
-      </div>
+      <div id="liq-detalle"></div>
+      <button class="btn btn-primary" onclick="exportarLiq()">📤 Compartir resumen</button>
     </div>
-
     <div class="card">
-      <div class="card-title">Cuentas de destino</div>
-      <div style="font-size:12px;color:var(--text-s);line-height:1.8">
-        <div style="margin-bottom:8px">
-          <strong style="color:var(--verde)">DAWUANATURE S.A.</strong> · Trizzia Bosqueti<br>
-          <span id="cuenta-dawua" style="font-family:'JetBrains Mono',monospace">⚠️ Completar datos bancarios en Google Sheets</span>
-        </div>
-        <div>
-          <strong style="color:var(--azul)">GRUCSA</strong> · RUC 0992585684001<br>
-          <span style="font-family:'JetBrains Mono',monospace">⚠️ Juan Carlos completa datos bancarios</span>
-        </div>
+      <div class="card-title">Cuentas de depósito</div>
+      <div style="font-size:12px;color:var(--ts);line-height:1.9">
+        <div style="margin-bottom:8px"><strong style="color:var(--v)">DAWUANATURE S.A.</strong> · Trizzia Bosqueti<br><span style="color:var(--am)">⚠️ Completar en hoja Datos Bancarios</span></div>
+        <div><strong style="color:var(--az)">GRUCSA</strong> · RUC 0992585684001<br><span style="color:var(--am)">⚠️ Juan Carlos completa datos bancarios</span></div>
       </div>
     </div>
-
   </div>
 
-  <!-- ══ INSTRUCCIONES ══ -->
-  <div id="screen-instrucciones" class="screen">
-
+  <!-- ═══ CONFIG ═══ -->
+  <div id="s-config" class="screen">
     <div class="card">
-      <div class="card-title">Conectar con Google Sheets</div>
-
-      <div style="background:var(--amber-clr);border:1px solid var(--amber);border-radius:10px;padding:12px;margin-bottom:14px">
-        <div style="font-size:13px;font-weight:700;color:#92400E;margin-bottom:4px">⚠️ Paso necesario para guardar datos</div>
-        <div style="font-size:12px;color:#78350F;line-height:1.5">
-          Por ahora los datos se guardan solo en este dispositivo. Sigue estos pasos para conectar con Google Sheets y que los datos sean permanentes y visibles para Juan Carlos y Trizzia.
-        </div>
+      <div class="card-title">Stock inicial de Ariana</div>
+      <div class="form-group">
+        <label>Unidades que recibiste de DAWUA GYE</label>
+        <input type="number" id="inp-stock-inicial" inputmode="numeric" placeholder="Ej: 50">
       </div>
-
-      <div class="step-block">
-        <div class="step-num">1</div>
-        <div class="step-info">
-          <div class="step-title">Abrir Google Sheets</div>
-          <div class="step-det">Ve a docs.google.com/spreadsheets y abre el archivo <strong>Tablero_DAWUA_593IA</strong> compartido por Juan Carlos.</div>
-        </div>
-      </div>
-
-      <div class="step-block">
-        <div class="step-num">2</div>
-        <div class="step-info">
-          <div class="step-title">Abrir Apps Script</div>
-          <div class="step-det">En Google Sheets: menú <strong>Extensiones → Apps Script</strong>. Se abre el editor de código.</div>
-        </div>
-      </div>
-
-      <div class="step-block">
-        <div class="step-num">3</div>
-        <div class="step-info">
-          <div class="step-title">Pegar este código</div>
-          <div class="step-det">Borra todo el contenido del editor y pega el siguiente código:</div>
-          <div class="code-block" id="apps-script-code">// Cargando código...</div>
-          <button onclick="copiarScript()" style="margin-top:8px;padding:8px 14px;border-radius:8px;background:var(--verde);color:#fff;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">
-            📋 Copiar código
-          </button>
-        </div>
-      </div>
-
-      <div class="step-block">
-        <div class="step-num">4</div>
-        <div class="step-info">
-          <div class="step-title">Publicar como aplicación web</div>
-          <div class="step-det">
-            1. Clic en <strong>Implementar → Nueva implementación</strong><br>
-            2. Tipo: <strong>Aplicación web</strong><br>
-            3. Ejecutar como: <strong>Yo</strong><br>
-            4. Acceso: <strong>Cualquier persona</strong><br>
-            5. Clic en <strong>Implementar</strong> → copia la URL
-          </div>
-        </div>
-      </div>
-
-      <div class="step-block">
-        <div class="step-num">5</div>
-        <div class="step-info">
-          <div class="step-title">Pegar la URL aquí</div>
-          <div class="step-det">Una vez que tengas la URL del Apps Script, pégala aquí:</div>
-          <input type="text" id="inp-webhook" placeholder="https://script.google.com/macros/s/..."
-            style="margin-top:8px;font-size:12px;font-family:'JetBrains Mono',monospace">
-          <button onclick="guardarWebhook()" style="margin-top:8px;padding:8px 14px;border-radius:8px;background:var(--verde-med);color:#fff;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;width:100%">
-            ✓ Guardar URL y conectar
-          </button>
-        </div>
-      </div>
-
-      <div class="step-block">
-        <div class="step-num">6</div>
-        <div class="step-info">
-          <div class="step-title">Probar la conexión</div>
-          <div class="step-det">Registra un movimiento de prueba y verifica que aparece en el Google Sheets.</div>
-          <button onclick="probarConexion()" style="margin-top:8px;padding:8px 14px;border-radius:8px;background:var(--azul);color:#fff;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;width:100%">
-            🔗 Probar conexión
-          </button>
-          <div id="test-result" style="margin-top:8px;font-size:12px;display:none"></div>
-        </div>
-      </div>
-
+      <button class="btn btn-primary" onclick="setStockInicial()">✓ Guardar stock inicial</button>
+      <div style="font-size:11px;color:var(--ts);margin-top:8px;line-height:1.5">Solo configura esto una vez al inicio. A partir de aquí el sistema descuenta automáticamente cuando registras entregas a PDVs.</div>
     </div>
-
+    <div class="card">
+      <div class="card-title">Conectar Google Sheets</div>
+      <div style="background:var(--ac);border:1px solid var(--am);border-radius:8px;padding:10px;margin-bottom:12px;font-size:12px;color:#92400E">
+        Conecta la app al Google Sheets para que Juan Carlos y Trizzia vean todo en tiempo real.
+      </div>
+      <div class="form-group">
+        <label>URL del Apps Script</label>
+        <input type="text" id="inp-webhook" placeholder="https://script.google.com/macros/s/...">
+      </div>
+      <button class="btn btn-primary" onclick="guardarWebhook()">✓ Guardar conexión</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Datos del sistema</div>
+      <div style="font-size:12px;color:var(--ts);line-height:1.9">
+        <div>PVP: <strong style="color:var(--v)">$14.99</strong></div>
+        <div>IVA: <strong>15%</strong> · Base sin IVA: <strong>$13.03</strong></div>
+        <div>Comisión PDV: <strong>20%</strong> · Ariana: <strong>10%</strong></div>
+        <div>Modelo utilidad: <strong>50% WDB / 50% DAWUA</strong></div>
+        <div>Umbral alerta: <strong>5 unidades</strong></div>
+      </div>
+      <button class="btn btn-danger" onclick="resetear()">🗑 Borrar todos los datos</button>
+    </div>
   </div>
 
+</div><!-- /main -->
+
+<!-- MODAL CREAR PDV -->
+<div class="modal-overlay" id="modal-pdv" onclick="cerrarModal(event)">
+  <div class="modal">
+    <div class="modal-title">
+      <span id="modal-pdv-title">Nuevo Punto de Venta</span>
+      <button class="modal-close" onclick="cerrarModalPDV()">✕</button>
+    </div>
+    <div class="form-group">
+      <label>Nombre del PDV *</label>
+      <input type="text" id="pdv-nombre" placeholder="Ej: Hotel Finch Bay">
+    </div>
+    <div class="form-group">
+      <label>Tipo</label>
+      <select id="pdv-tipo">
+        <option value="hotel">🏨 Hotel / Lodge</option>
+        <option value="tienda">🛍️ Tienda / Souvenir</option>
+        <option value="restaurante">🍽️ Restaurante / Café</option>
+        <option value="tour">🚤 Operadora de tours</option>
+        <option value="otro">📍 Otro</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Contacto / Encargado</label>
+      <input type="text" id="pdv-contacto" placeholder="Nombre del encargado">
+    </div>
+    <div class="form-group">
+      <label>WhatsApp del PDV</label>
+      <input type="tel" id="pdv-wa" placeholder="+593...">
+    </div>
+    <div class="form-group">
+      <label>Dirección / Referencia</label>
+      <input type="text" id="pdv-dir" placeholder="Ej: Malecón Darwin, frente al muelle">
+    </div>
+    <button class="btn btn-primary" id="btn-guardar-pdv" onclick="guardarPDV()">✓ Crear PDV</button>
+  </div>
 </div>
 
 <!-- TOAST -->
@@ -535,433 +351,436 @@ select:focus,input:focus{
 <script>
 'use strict';
 
-// ═══════════════════════════════════════════
-// ESTADO GLOBAL
-// ═══════════════════════════════════════════
-const UMBRAL_ALERTA = 5;
+// ═══ CONSTANTES ═══
 const PVP = 14.99;
-const IVA = 0.15;
-const BASE_SIN_IVA = PVP / (1 + IVA); // 13.03
-const COMISION_PDV = 0.20;
-const COMISION_ARIANA = 0.10;
-const COSTO_FABRICA = 3.50;
+const BASE = PVP / 1.15; // 13.03
+const C_PDV = 0.20;
+const C_ARIANA = 0.10;
+const C_FABRICA = 3.50;
 const LOGISTICA = 0.25;
+const UMBRAL = 5;
+const TIPOS = {hotel:'🏨',tienda:'🛍️',restaurante:'🍽️',tour:'🚤',otro:'📍'};
 
-const PDV_LIST = [
-  { id: 'Finch Bay',   nombre: 'Hotel Finch Bay',        emoji: '🏨' },
-  { id: 'Ikala',       nombre: 'Hotel Ikala Galápagos',  emoji: '🏨' },
-  { id: 'Red Mangrove',nombre: 'Red Mangrove Lodge',     emoji: '🏨' },
-  { id: 'Royal Palm',  nombre: 'Royal Palm Hilton',       emoji: '🏨' },
-  { id: 'Malecon',     nombre: 'Tienda Malecón #1',       emoji: '🛍️' },
-];
-
-let estado = {
-  stock: { 'Finch Bay': 10, 'Ikala': 10, 'Red Mangrove': 10, 'Royal Palm': 10, 'Malecon': 10 },
-  movimientos: [],
-  tipoActual: 'entrega',
+// ═══ ESTADO ═══
+let D = {
+  stockAriana: 0,
+  pdvs: [],        // {id, nombre, tipo, contacto, wa, dir, stock}
+  movimientos: [], // {id, fecha, tipo, pdvId, pdvNombre, qty, precio, notas, stockAntes, stockDespues}
   webhookURL: '',
+  editandoPDV: null,
 };
 
-// Cargar estado guardado
-function cargarEstado() {
+function cargar() {
   try {
-    const s = localStorage.getItem('dawua_estado');
-    if (s) {
-      const parsed = JSON.parse(s);
-      estado = { ...estado, ...parsed };
-    }
-    const wh = localStorage.getItem('dawua_webhook');
-    if (wh) estado.webhookURL = wh;
+    const s = localStorage.getItem('dawua_v3');
+    if (s) D = {...D, ...JSON.parse(s)};
+    const wh = localStorage.getItem('dawua_wh');
+    if (wh) D.webhookURL = wh;
   } catch(e) {}
 }
 
-function guardarEstado() {
-  try {
-    localStorage.setItem('dawua_estado', JSON.stringify({
-      stock: estado.stock,
-      movimientos: estado.movimientos,
-    }));
-  } catch(e) {}
+function guardar() {
+  try { localStorage.setItem('dawua_v3', JSON.stringify({stockAriana:D.stockAriana,pdvs:D.pdvs,movimientos:D.movimientos})); }
+  catch(e) {}
 }
 
-// ═══════════════════════════════════════════
-// NAVEGACIÓN
-// ═══════════════════════════════════════════
-function showTab(tab) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById(`screen-${tab}`).classList.add('active');
-  event.target.classList.add('active');
-
-  if (tab === 'dashboard') renderDashboard();
-  if (tab === 'historial') renderHistorial();
-  if (tab === 'liquidacion') renderLiquidacion();
-  if (tab === 'instrucciones') renderInstrucciones();
+// ═══ NAVEGACIÓN ═══
+function tab(id, btn) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('on'));
+  document.getElementById('s-' + id).classList.add('on');
+  btn.classList.add('on');
+  if (id === 'dashboard') renderDash();
+  if (id === 'pdvs') renderPDVs();
+  if (id === 'registrar') renderRegistrar();
+  if (id === 'historial') renderHistorial();
+  if (id === 'liquidacion') renderLiquidacion();
+  if (id === 'config') renderConfig();
 }
 
-// ═══════════════════════════════════════════
-// DASHBOARD
-// ═══════════════════════════════════════════
-function renderDashboard() {
-  // KPIs
-  const ventas = estado.movimientos.filter(m => m.tipo === 'venta').reduce((a,m) => a+m.cantidad, 0);
-  const stockTotal = Object.values(estado.stock).reduce((a,b) => a+b, 0);
-  const ingresos = ventas * PVP;
-  const utilidad = ventas * (BASE_SIN_IVA * (1 - COMISION_PDV - COMISION_ARIANA) - COSTO_FABRICA - LOGISTICA);
-
-  document.getElementById('kpi-vendidas').textContent = ventas;
-  document.getElementById('kpi-stock').textContent = stockTotal;
-  document.getElementById('kpi-ingresos').textContent = '$' + ingresos.toFixed(2);
-  document.getElementById('kpi-utilidad').textContent = '$' + Math.max(0, utilidad/2).toFixed(2);
+// ═══ DASHBOARD ═══
+function renderDash() {
+  const vendidas = D.movimientos.filter(m => m.tipo === 'venta').reduce((a,m) => a+m.qty, 0);
+  const ingresos = vendidas * PVP;
+  document.getElementById('k-stock').textContent = D.stockAriana;
+  document.getElementById('k-pdvs').textContent = D.pdvs.length;
+  document.getElementById('k-vendidas').textContent = vendidas;
+  document.getElementById('k-ingresos').textContent = '$' + ingresos.toFixed(2);
 
   // Alertas
-  const alertasContainer = document.getElementById('alertas-container');
-  alertasContainer.innerHTML = '';
-  PDV_LIST.forEach(pdv => {
-    const s = estado.stock[pdv.id] || 0;
-    if (s <= UMBRAL_ALERTA) {
-      alertasContainer.innerHTML += `
-        <div class="alerta-box">
-          <div class="alerta-title">🚨 ${pdv.nombre} — Stock crítico</div>
-          <div class="alerta-det">Solo quedan <strong>${s} unidades</strong>. Umbral mínimo: ${UMBRAL_ALERTA}u. Reponer pronto.</div>
-        </div>`;
-    }
+  const al = document.getElementById('alertas');
+  al.innerHTML = '';
+  D.pdvs.filter(p => p.stock <= UMBRAL && p.stock > 0).forEach(p => {
+    al.innerHTML += `<div class="alerta-box"><div class="alerta-title">⚠️ ${p.nombre} — Stock bajo</div><div class="alerta-det">Solo ${p.stock} unidades · Reponer pronto</div></div>`;
+  });
+  D.pdvs.filter(p => p.stock === 0).forEach(p => {
+    al.innerHTML += `<div class="alerta-box"><div class="alerta-title">🚨 ${p.nombre} — AGOTADO</div><div class="alerta-det">Stock en cero · Reposición urgente</div></div>`;
   });
 
-  // Stock semáforo
-  const grid = document.getElementById('stock-grid');
-  grid.innerHTML = PDV_LIST.map(pdv => {
-    const s = estado.stock[pdv.id] || 0;
-    const cls = s <= 0 ? 'danger' : s <= UMBRAL_ALERTA ? 'warn' : 'ok';
-    const pct = Math.min(100, (s/10)*100);
-    const colors = { ok: '#25D366', warn: '#F59E0B', danger: '#EF4444' };
-    return `
-      <div class="stock-item">
-        <div class="stock-dot ${cls}"></div>
-        <div style="flex:1">
-          <div class="stock-pdv">${pdv.emoji} ${pdv.nombre}</div>
-          <div class="stock-bar"><div class="stock-bar-fill" style="width:${pct}%;background:${colors[cls]}"></div></div>
+  // Stock por PDV
+  const sp = document.getElementById('stock-pdvs');
+  if (D.pdvs.length === 0) {
+    sp.innerHTML = `<div class="empty"><div class="empty-ico">🏪</div><div class="empty-txt">Sin PDVs registrados aún.<br>Ve a la pestaña PDVs para crear el primero.</div><button class="empty-btn" onclick="tab('pdvs',document.querySelectorAll('.nav-btn')[1])">Crear primer PDV</button></div>`;
+  } else {
+    sp.innerHTML = D.pdvs.map(p => {
+      const cls = p.stock === 0 ? 'danger' : p.stock <= UMBRAL ? 'warn' : 'ok';
+      const pct = Math.max(5, Math.min(100, (p.stock / 15) * 100));
+      const colors = {ok:'#25D366', warn:'#F59E0B', danger:'#EF4444'};
+      return `<div class="pdv-item" onclick="tab('pdvs',document.querySelectorAll('.nav-btn')[1])">
+        <div class="pdv-avatar">${TIPOS[p.tipo]||'📍'}</div>
+        <div class="pdv-info">
+          <div class="pdv-name">${p.nombre}</div>
+          <div style="height:4px;background:#E5E7EB;border-radius:2px;margin-top:5px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${colors[cls]};border-radius:2px"></div></div>
         </div>
-        <div class="stock-units ${cls}">${s}</div>
+        <div class="pdv-stock"><div class="pdv-stock-num ${cls}">${p.stock}</div><div class="pdv-stock-lbl">unidades</div></div>
       </div>`;
-  }).join('');
+    }).join('');
+  }
 
   // Última actividad
-  const ul = document.getElementById('ultima-actividad');
-  const recientes = [...estado.movimientos].reverse().slice(0, 3);
-  if (recientes.length === 0) {
-    ul.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-s);font-size:13px">Sin movimientos aún. Registra el primero ➕</div>';
-  } else {
-    ul.innerHTML = recientes.map(m => historialItemHTML(m)).join('');
-  }
+  const ua = document.getElementById('ultima-act');
+  const rec = [...D.movimientos].reverse().slice(0,3);
+  ua.innerHTML = rec.length === 0
+    ? '<div style="text-align:center;padding:16px;color:var(--ts);font-size:13px">Sin movimientos aún</div>'
+    : rec.map(movHTML).join('');
 }
 
-// ═══════════════════════════════════════════
-// TIPO DE MOVIMIENTO
-// ═══════════════════════════════════════════
-function selectTipo(tipo, btn) {
-  document.querySelectorAll('.tipo-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  estado.tipoActual = tipo;
-  // Mostrar precio solo en ventas
-  document.getElementById('grupo-precio').style.display = tipo === 'venta' ? 'block' : 'none';
-  actualizarNota();
-}
-
-function actualizarNota() {
-  const pdv = document.getElementById('sel-pdv').value;
-  const qty = parseInt(document.getElementById('inp-cantidad').value) || 0;
-  const nota = document.getElementById('nota-calculo');
-  const tipo = estado.tipoActual;
-
-  if (!pdv || !qty) { nota.innerHTML = ''; return; }
-
-  const pdvNombre = PDV_LIST.find(p => p.id === pdv)?.nombre || pdv;
-  const stockActual = estado.stock[pdv] || 0;
-
-  if (tipo === 'entrega') {
-    const nuevoStock = stockActual + qty;
-    nota.innerHTML = `📦 <strong>${pdvNombre}</strong>: stock actual ${stockActual}u → nuevo stock <strong>${nuevoStock}u</strong>`;
-  } else if (tipo === 'venta') {
-    const nuevoStock = Math.max(0, stockActual - qty);
-    const total = qty * PVP;
-    const comPDV = qty * BASE_SIN_IVA * COMISION_PDV;
-    const comAriana = qty * BASE_SIN_IVA * COMISION_ARIANA;
-    const utilidad = qty * (BASE_SIN_IVA * (1-COMISION_PDV-COMISION_ARIANA) - COSTO_FABRICA - LOGISTICA);
-    nota.innerHTML = `
-      💰 <strong>${qty} frascos × $${PVP}</strong> = <strong>$${total.toFixed(2)}</strong><br>
-      📦 Stock ${pdvNombre}: ${stockActual}u → <strong>${nuevoStock}u</strong><br>
-      🤝 PDV 20%: $${comPDV.toFixed(2)} · Ariana 10%: $${comAriana.toFixed(2)}<br>
-      ✨ Utilidad neta: <strong>$${utilidad.toFixed(2)}</strong> (50% c/u)`;
-  } else if (tipo === 'reposicion') {
-    nota.innerHTML = `🔄 Solicitando ${qty}u desde DAWUA GYE para <strong>${pdvNombre}</strong>`;
-  }
-}
-
-// Actualizar nota en tiempo real
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('sel-pdv').addEventListener('change', actualizarNota);
-  document.getElementById('inp-cantidad').addEventListener('input', actualizarNota);
-});
-
-// ═══════════════════════════════════════════
-// REGISTRAR MOVIMIENTO
-// ═══════════════════════════════════════════
-async function registrarMovimiento() {
-  const pdv = document.getElementById('sel-pdv').value;
-  const qty = parseInt(document.getElementById('inp-cantidad').value);
-  const notas = document.getElementById('inp-notas').value;
-  const tipo = estado.tipoActual;
-
-  if (!pdv) { showToast('Selecciona un punto de venta', true); return; }
-  if (!qty || qty <= 0) { showToast('Ingresa una cantidad válida', true); return; }
-
-  // Validar stock para ventas
-  if (tipo === 'venta' && qty > (estado.stock[pdv] || 0)) {
-    showToast(`Stock insuficiente. Disponible: ${estado.stock[pdv] || 0}u`, true);
+// ═══ PDVs ═══
+function renderPDVs() {
+  const el = document.getElementById('lista-pdvs');
+  if (D.pdvs.length === 0) {
+    el.innerHTML = `<div class="empty"><div class="empty-ico">🏪</div><div class="empty-txt">No hay PDVs registrados.<br>Crea el primero cuando consigas un punto de venta.</div><button class="empty-btn" onclick="abrirModalPDV()">+ Crear PDV</button></div>`;
     return;
   }
+  el.innerHTML = D.pdvs.map(p => {
+    const cls = p.stock === 0 ? 'danger' : p.stock <= UMBRAL ? 'warn' : 'ok';
+    const badge = p.stock === 0 ? 'badge-danger' : p.stock <= UMBRAL ? 'badge-warn' : 'badge-ok';
+    const badgeTxt = p.stock === 0 ? 'AGOTADO' : p.stock <= UMBRAL ? 'STOCK BAJO' : 'OK';
+    return `<div class="pdv-item">
+      <div class="pdv-avatar">${TIPOS[p.tipo]||'📍'}</div>
+      <div class="pdv-info">
+        <div class="pdv-name">${p.nombre}</div>
+        <div class="pdv-type">${p.contacto||''} ${p.dir ? '· '+p.dir : ''}</div>
+        ${p.wa ? `<div style="font-size:10px;color:var(--vm);margin-top:2px">📱 ${p.wa}</div>` : ''}
+        <div style="margin-top:5px;display:flex;gap:6px;align-items:center">
+          <span class="badge ${badge}">${badgeTxt}</span>
+          <span style="font-size:10px;color:var(--ts)">${p.stock}u en este PDV</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0">
+        <button onclick="editarPDV('${p.id}')" style="background:var(--vl);color:var(--v);border:none;border-radius:7px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">Editar</button>
+        <button onclick="eliminarPDV('${p.id}')" style="background:var(--rc);color:var(--rd);border:none;border-radius:7px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">Borrar</button>
+      </div>
+    </div>`;
+  }).join('');
+}
 
-  // Bloquear botón
-  const btn = document.getElementById('btn-registrar');
-  const btnText = document.getElementById('btn-text');
-  const spinner = document.getElementById('btn-spinner');
-  btn.disabled = true;
-  btnText.style.display = 'none';
-  spinner.style.display = 'block';
+function abrirModalPDV() {
+  D.editandoPDV = null;
+  document.getElementById('pdv-nombre').value = '';
+  document.getElementById('pdv-tipo').value = 'hotel';
+  document.getElementById('pdv-contacto').value = '';
+  document.getElementById('pdv-wa').value = '';
+  document.getElementById('pdv-dir').value = '';
+  document.getElementById('modal-pdv-title').textContent = 'Nuevo Punto de Venta';
+  document.getElementById('btn-guardar-pdv').textContent = '✓ Crear PDV';
+  document.getElementById('modal-pdv').classList.add('show');
+}
 
-  // Crear movimiento
+function editarPDV(id) {
+  const p = D.pdvs.find(x => x.id === id);
+  if (!p) return;
+  D.editandoPDV = id;
+  document.getElementById('pdv-nombre').value = p.nombre;
+  document.getElementById('pdv-tipo').value = p.tipo;
+  document.getElementById('pdv-contacto').value = p.contacto || '';
+  document.getElementById('pdv-wa').value = p.wa || '';
+  document.getElementById('pdv-dir').value = p.dir || '';
+  document.getElementById('modal-pdv-title').textContent = 'Editar PDV';
+  document.getElementById('btn-guardar-pdv').textContent = '✓ Guardar cambios';
+  document.getElementById('modal-pdv').classList.add('show');
+}
+
+function guardarPDV() {
+  const nombre = document.getElementById('pdv-nombre').value.trim();
+  if (!nombre) { toast('Ingresa el nombre del PDV', true); return; }
+  if (D.editandoPDV) {
+    const p = D.pdvs.find(x => x.id === D.editandoPDV);
+    if (p) {
+      p.nombre = nombre;
+      p.tipo = document.getElementById('pdv-tipo').value;
+      p.contacto = document.getElementById('pdv-contacto').value.trim();
+      p.wa = document.getElementById('pdv-wa').value.trim();
+      p.dir = document.getElementById('pdv-dir').value.trim();
+    }
+    toast('PDV actualizado ✅');
+  } else {
+    D.pdvs.push({
+      id: 'pdv_' + Date.now(),
+      nombre,
+      tipo: document.getElementById('pdv-tipo').value,
+      contacto: document.getElementById('pdv-contacto').value.trim(),
+      wa: document.getElementById('pdv-wa').value.trim(),
+      dir: document.getElementById('pdv-dir').value.trim(),
+      stock: 0,
+      creadoEn: new Date().toISOString(),
+    });
+    toast('PDV creado ✅');
+  }
+  guardar();
+  cerrarModalPDV();
+  renderPDVs();
+  actualizarSelectPDV();
+}
+
+function eliminarPDV(id) {
+  const p = D.pdvs.find(x => x.id === id);
+  if (!p) return;
+  if (!confirm(`¿Eliminar "${p.nombre}"? Se perderán sus datos de stock.`)) return;
+  D.stockAriana += p.stock; // devolver stock a Ariana
+  D.pdvs = D.pdvs.filter(x => x.id !== id);
+  guardar();
+  renderPDVs();
+  actualizarSelectPDV();
+  toast('PDV eliminado');
+}
+
+function cerrarModalPDV() { document.getElementById('modal-pdv').classList.remove('show'); }
+function cerrarModal(e) { if (e.target.classList.contains('modal-overlay')) cerrarModalPDV(); }
+
+// ═══ REGISTRAR ═══
+let tipoActual = 'entrega';
+
+function renderRegistrar() {
+  actualizarSelectPDV();
+  document.getElementById('grp-ariana').style.display = tipoActual === 'entrega' ? 'block' : 'none';
+  document.getElementById('grp-precio').style.display = tipoActual === 'venta' ? 'block' : 'none';
+  document.getElementById('stock-ariana-disp').textContent = D.stockAriana + ' unidades disponibles';
+}
+
+function actualizarSelectPDV() {
+  const sel = document.getElementById('sel-pdv');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">Selecciona un PDV...</option>';
+  D.pdvs.forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = p.id;
+    opt.textContent = `${TIPOS[p.tipo]||'📍'} ${p.nombre} (${p.stock}u)`;
+    sel.appendChild(opt);
+  });
+  if (cur) sel.value = cur;
+}
+
+function selTipo(tipo, btn) {
+  tipoActual = tipo;
+  document.querySelectorAll('.tipo-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('grp-ariana').style.display = tipo === 'entrega' ? 'block' : 'none';
+  document.getElementById('grp-precio').style.display = tipo === 'venta' ? 'block' : 'none';
+  document.getElementById('stock-ariana-disp').textContent = D.stockAriana + ' unidades disponibles';
+  calcNota();
+}
+
+function calcNota() {
+  const pdvId = document.getElementById('sel-pdv').value;
+  const qty = parseInt(document.getElementById('inp-cantidad')?.value || document.getElementById('inp-qty').value) || 0;
+  const nota = document.getElementById('nota-calc');
+  const pdv = D.pdvs.find(p => p.id === pdvId);
+  if (!pdvId || !qty) { nota.classList.remove('show'); return; }
+
+  if (tipoActual === 'entrega') {
+    if (qty > D.stockAriana) { nota.innerHTML = `⚠️ No tienes suficiente stock. Disponible: <strong>${D.stockAriana}u</strong>`; nota.classList.add('show'); return; }
+    nota.innerHTML = `📦 Entregarás <strong>${qty}u</strong> a <strong>${pdv?.nombre||''}</strong><br>Tu stock: ${D.stockAriana}u → <strong>${D.stockAriana - qty}u</strong>`;
+  } else if (tipoActual === 'venta') {
+    const total = qty * PVP;
+    const comPDV = qty * BASE * C_PDV;
+    const comAr = qty * BASE * C_ARIANA;
+    const util = qty * (BASE * (1 - C_PDV - C_ARIANA) - C_FABRICA - LOGISTICA);
+    nota.innerHTML = `💰 <strong>${qty}u × $${PVP}</strong> = <strong>$${total.toFixed(2)}</strong><br>PDV recibe: $${comPDV.toFixed(2)} · Tu comisión: $${comAr.toFixed(2)}<br>Utilidad neta: <strong>$${Math.max(0,util).toFixed(2)}</strong> (50% c/u)`;
+  } else if (tipoActual === 'devolucion') {
+    nota.innerHTML = `↩️ Devolución de <strong>${qty}u</strong> de <strong>${pdv?.nombre||''}</strong> → vuelven a tu stock`;
+  }
+  nota.classList.add('show');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('sel-pdv').addEventListener('change', calcNota);
+  document.getElementById('inp-qty').addEventListener('input', calcNota);
+});
+
+async function registrar() {
+  const pdvId = document.getElementById('sel-pdv').value;
+  const qty = parseInt(document.getElementById('inp-qty').value) || 0;
+  const notas = document.getElementById('inp-notas').value.trim();
+  const pdv = D.pdvs.find(p => p.id === pdvId);
+
+  if (!pdvId) { toast('Selecciona un PDV', true); return; }
+  if (!qty || qty <= 0) { toast('Ingresa una cantidad válida', true); return; }
+  if (tipoActual === 'entrega' && qty > D.stockAriana) { toast(`Stock insuficiente. Tienes ${D.stockAriana}u`, true); return; }
+  if (tipoActual === 'venta' && qty > (pdv?.stock||0)) { toast(`Stock insuficiente en PDV. Hay ${pdv?.stock||0}u`, true); return; }
+
   const mov = {
     id: Date.now(),
     fecha: new Date().toISOString(),
-    tipo,
-    pdv,
-    pdvNombre: PDV_LIST.find(p => p.id === pdv)?.nombre || pdv,
-    cantidad: qty,
-    precio: tipo === 'venta' ? parseFloat(document.getElementById('inp-precio').value) : 0,
+    tipo: tipoActual,
+    pdvId,
+    pdvNombre: pdv?.nombre || '',
+    qty,
+    precio: tipoActual === 'venta' ? parseFloat(document.getElementById('inp-precio').value) : 0,
     notas,
-    stockAntes: estado.stock[pdv] || 0,
+    stockAriaAntes: D.stockAriana,
+    stockPDVAntes: pdv?.stock || 0,
   };
 
   // Actualizar stock
-  if (tipo === 'entrega' || tipo === 'reposicion') {
-    estado.stock[pdv] = (estado.stock[pdv] || 0) + qty;
-  } else if (tipo === 'venta') {
-    estado.stock[pdv] = Math.max(0, (estado.stock[pdv] || 0) - qty);
-  } else if (tipo === 'ajuste') {
-    estado.stock[pdv] = qty; // ajuste pone el valor exacto
+  if (tipoActual === 'entrega') {
+    D.stockAriana -= qty;
+    if (pdv) pdv.stock += qty;
+  } else if (tipoActual === 'venta') {
+    if (pdv) pdv.stock -= qty;
+  } else if (tipoActual === 'devolucion') {
+    D.stockAriana += qty;
+    if (pdv) pdv.stock -= qty;
+  } else if (tipoActual === 'ajuste') {
+    if (pdv) pdv.stock = qty;
   }
 
-  mov.stockDespues = estado.stock[pdv];
-  estado.movimientos.push(mov);
-  guardarEstado();
+  mov.stockAriaDesp = D.stockAriana;
+  mov.stockPDVDesp = pdv?.stock || 0;
+  D.movimientos.push(mov);
+  guardar();
 
-  // Enviar al Google Sheet si hay webhook
-  if (estado.webhookURL) {
-    try {
-      await fetch(estado.webhookURL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(mov),
-      });
-    } catch(e) {
-      console.warn('Webhook error:', e);
-    }
+  // Enviar a webhook
+  if (D.webhookURL) {
+    try { await fetch(D.webhookURL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(mov) }); }
+    catch(e) {}
   }
 
-  // Reset form
+  // Reset
   document.getElementById('sel-pdv').value = '';
-  document.getElementById('inp-cantidad').value = '';
+  document.getElementById('inp-qty').value = '';
   document.getElementById('inp-notas').value = '';
-  document.getElementById('nota-calculo').innerHTML = '';
+  document.getElementById('nota-calc').classList.remove('show');
 
-  btn.disabled = false;
-  btnText.style.display = 'inline';
-  spinner.style.display = 'none';
-
-  // Verificar alerta de stock
-  const stockNuevo = estado.stock[pdv];
-  if (stockNuevo <= UMBRAL_ALERTA && stockNuevo > 0) {
-    showToast(`✅ Registrado · ⚠️ ${PDV_LIST.find(p=>p.id===pdv)?.nombre}: solo ${stockNuevo}u`);
-  } else if (stockNuevo === 0) {
-    showToast(`✅ Registrado · 🚨 ${PDV_LIST.find(p=>p.id===pdv)?.nombre}: AGOTADO`, true);
+  // Verificar alerta
+  if (pdv && pdv.stock <= UMBRAL && pdv.stock > 0) {
+    toast(`✅ Registrado · ⚠️ ${pdv.nombre}: solo ${pdv.stock}u`);
   } else {
-    showToast('✅ Movimiento registrado correctamente');
+    toast('✅ Movimiento registrado');
   }
 
-  // Volver al dashboard
-  setTimeout(() => {
-    showTab('dashboard');
-    document.querySelector('.nav-tab').classList.add('active');
-    document.querySelectorAll('.nav-tab').forEach((t,i) => { if(i!==0) t.classList.remove('active'); });
-    document.getElementById('screen-registrar').classList.remove('active');
-    document.getElementById('screen-dashboard').classList.add('active');
-  }, 1200);
+  actualizarSelectPDV();
+  setTimeout(() => { tab('dashboard', document.querySelectorAll('.nav-btn')[0]); }, 1000);
 }
 
-// ═══════════════════════════════════════════
-// HISTORIAL
-// ═══════════════════════════════════════════
-function historialItemHTML(m) {
-  const iconos = { entrega:'📦', venta:'💰', reposicion:'🔄', ajuste:'✏️' };
-  const colores = { entrega:'entrega', venta:'venta', reposicion:'entrega', ajuste:'alerta' };
+// ═══ HISTORIAL ═══
+function movHTML(m) {
+  const iconos = {entrega:'📦',venta:'💰',devolucion:'↩️',ajuste:'✏️'};
+  const cls = {entrega:'entrega',venta:'venta',devolucion:'entrega',ajuste:'alerta'};
+  const color = {entrega:'#25D366',venta:'#1D4ED8',devolucion:'#F59E0B',ajuste:'#6B7280'};
+  const signo = {entrega:'-',venta:'',devolucion:'+',ajuste:'='};
   const fecha = new Date(m.fecha);
-  const hora = fecha.toLocaleTimeString('es-EC', { hour:'2-digit', minute:'2-digit' });
-  const dia = fecha.toLocaleDateString('es-EC', { day:'2-digit', month:'short' });
-  const signo = m.tipo === 'venta' ? '-' : m.tipo === 'entrega' ? '+' : '';
-  const color = m.tipo === 'venta' ? '#1D4ED8' : m.tipo === 'entrega' ? '#25D366' : '#F59E0B';
-  return `
-    <div class="historial-item">
-      <div class="hist-icon ${colores[m.tipo]||'entrega'}">${iconos[m.tipo]||'📦'}</div>
-      <div class="hist-info">
-        <div class="hist-pdv">${m.pdvNombre || m.pdv}</div>
-        <div class="hist-det">${m.tipo.charAt(0).toUpperCase()+m.tipo.slice(1)} · Stock: ${m.stockAntes}→${m.stockDespues}u${m.notas?' · '+m.notas:''}</div>
-      </div>
-      <div class="hist-meta">
-        <div class="hist-qty" style="color:${color}">${signo}${m.cantidad}u</div>
-        <div class="hist-time">${dia} ${hora}</div>
-      </div>
-    </div>`;
+  const hora = fecha.toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit'});
+  const dia = fecha.toLocaleDateString('es-EC',{day:'2-digit',month:'short'});
+  return `<div class="mov-item">
+    <div class="mov-ico ${cls[m.tipo]||'entrega'}">${iconos[m.tipo]||'📦'}</div>
+    <div class="mov-info">
+      <div class="mov-pdv">${m.pdvNombre}</div>
+      <div class="mov-det">${m.tipo.charAt(0).toUpperCase()+m.tipo.slice(1)}${m.notas?' · '+m.notas:''}</div>
+    </div>
+    <div class="mov-right">
+      <div class="mov-qty" style="color:${color[m.tipo]}">${signo[m.tipo]}${m.qty}u</div>
+      <div class="mov-time">${dia} ${hora}</div>
+    </div>
+  </div>`;
 }
 
 function renderHistorial() {
-  const list = document.getElementById('historial-list');
-  if (estado.movimientos.length === 0) {
-    list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-s);font-size:13px">Sin movimientos aún.</div>';
-    return;
-  }
-  list.innerHTML = [...estado.movimientos].reverse().map(historialItemHTML).join('');
+  const el = document.getElementById('lista-historial');
+  if (D.movimientos.length === 0) { el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--ts);font-size:13px">Sin movimientos aún.</div>'; return; }
+  el.innerHTML = [...D.movimientos].reverse().map(movHTML).join('');
 }
 
-// ═══════════════════════════════════════════
-// LIQUIDACIÓN
-// ═══════════════════════════════════════════
+// ═══ LIQUIDACIÓN ═══
 function renderLiquidacion() {
-  const ventas = estado.movimientos.filter(m => m.tipo === 'venta');
-  const totalUnidades = ventas.reduce((a,m) => a+m.cantidad, 0);
-  const totalCobrado = totalUnidades * PVP;
-  const comPDV = totalUnidades * BASE_SIN_IVA * COMISION_PDV;
-  const saldoBruto = totalCobrado - comPDV;
-  const comAriana = saldoBruto * COMISION_ARIANA;
-  const totalDepositar = saldoBruto - comAriana;
-  const costoFabrica = totalUnidades * COSTO_FABRICA;
-  const costoLog = totalUnidades * LOGISTICA;
-  const utilidad = totalDepositar - costoFabrica - costoLog;
-  const grucsa50 = Math.max(0, utilidad * 0.5);
-  const dawua50 = Math.max(0, utilidad * 0.5);
-
+  const ventas = D.movimientos.filter(m => m.tipo === 'venta');
+  const totalU = ventas.reduce((a,m) => a+m.qty, 0);
+  const totalCob = totalU * PVP;
+  const comPDV = totalU * BASE * C_PDV;
+  const saldoBruto = totalCob - comPDV;
+  const comAr = saldoBruto * C_ARIANA;
+  const depositar = saldoBruto - comAr;
+  const fabrica = totalU * C_FABRICA;
+  const log = totalU * LOGISTICA;
+  const util = depositar - fabrica - log;
+  const grucsa = Math.max(0, util * 0.5);
+  const dawua = Math.max(0, util * 0.5);
   const $ = v => '$' + Math.abs(v).toFixed(2);
 
-  document.getElementById('liq-resumen').innerHTML = `
-    <div class="liq-row"><span>Total unidades vendidas</span><span class="liq-val">${totalUnidades}u</span></div>
-    <div class="liq-row"><span>Total cobrado a turistas</span><span class="liq-val">${$(totalCobrado)}</span></div>
-    <div class="liq-row"><span>— Comisión PDV 20% (pagada)</span><span class="liq-val" style="color:var(--amber)">-${$(comPDV)}</span></div>
+  document.getElementById('liq-detalle').innerHTML = `
+    <div class="liq-row"><span>Unidades vendidas</span><span class="liq-val">${totalU}u</span></div>
+    <div class="liq-row"><span>Total cobrado a turistas</span><span class="liq-val">${$(totalCob)}</span></div>
+    <div class="liq-row"><span>— Comisión PDV 20% (pagada)</span><span class="liq-val" style="color:var(--am)">-${$(comPDV)}</span></div>
     <div class="liq-row"><span>Saldo bruto en mano Ariana</span><span class="liq-val">${$(saldoBruto)}</span></div>
-    <div class="liq-row"><span>— Comisión Ariana 10%</span><span class="liq-val" style="color:var(--amber)">-${$(comAriana)}</span></div>
-    <div class="liq-row total"><span>TOTAL A DEPOSITAR A DAWUA</span><span class="liq-val">${$(totalDepositar)}</span></div>
-    <div style="height:8px"></div>
-    <div class="liq-row" style="color:var(--text-s)"><span>— Costo fábrica DAWUA</span><span class="liq-val">-${$(costoFabrica)}</span></div>
-    <div class="liq-row" style="color:var(--text-s)"><span>— Logística</span><span class="liq-val">-${$(costoLog)}</span></div>
-    <div class="liq-row total"><span>UTILIDAD NETA</span><span class="liq-val">${$(Math.max(0,utilidad))}</span></div>
-    <div class="liq-row grucsa"><span>GRUCSA 50%</span><span class="liq-val" style="color:var(--azul)">${$(grucsa50)}</span></div>
-    <div class="liq-row total"><span>DAWUA 50%</span><span class="liq-val">${$(dawua50)}</span></div>`;
+    <div class="liq-row"><span>— Tu comisión 10%</span><span class="liq-val" style="color:var(--am)">-${$(comAr)}</span></div>
+    <div class="liq-row total"><span>DEPOSITAR A DAWUA</span><span class="liq-val">${$(depositar)}</span></div>
+    <div style="height:6px"></div>
+    <div class="liq-row" style="color:var(--ts)"><span>— Costo fábrica DAWUA</span><span class="liq-val">-${$(fabrica)}</span></div>
+    <div class="liq-row" style="color:var(--ts)"><span>— Logística</span><span class="liq-val">-${$(log)}</span></div>
+    <div class="liq-row total"><span>UTILIDAD NETA</span><span class="liq-val">${$(Math.max(0,util))}</span></div>
+    <div class="liq-row grucsa"><span>GRUCSA 50%</span><span class="liq-val" style="color:var(--az)">${$(grucsa)}</span></div>
+    <div class="liq-row total"><span>DAWUA 50%</span><span class="liq-val">${$(dawua)}</span></div>`;
 }
 
-function exportarLiquidacion() {
-  showToast('Próximamente: exportar a PDF o WhatsApp');
+function exportarLiq() { toast('Próximamente: exportar por WhatsApp'); }
+
+// ═══ CONFIG ═══
+function renderConfig() {
+  document.getElementById('inp-stock-inicial').value = D.stockAriana || '';
+  const wh = localStorage.getItem('dawua_wh') || '';
+  document.getElementById('inp-webhook').value = wh;
 }
 
-// ═══════════════════════════════════════════
-// INSTRUCCIONES Y CONEXIÓN
-// ═══════════════════════════════════════════
-const APPS_SCRIPT = `function doPost(e) {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet()
-    .getSheetByName("RegistroBot");
-  const data = JSON.parse(e.postData.contents);
-  sheet.appendRow([
-    new Date(data.fecha),
-    data.tipo,
-    data.pdvNombre,
-    data.cantidad,
-    data.precio || 0,
-    data.stockAntes,
-    data.stockDespues,
-    data.notas || "",
-  ]);
-  return ContentService
-    .createTextOutput(JSON.stringify({status:"ok"}))
-    .setMimeType(ContentService.MimeType.JSON);
-}
-
-function doGet(e) {
-  return ContentService
-    .createTextOutput(JSON.stringify({status:"ok",msg:"DAWUA 593IA activo"}))
-    .setMimeType(ContentService.MimeType.JSON);
-}`;
-
-function renderInstrucciones() {
-  document.getElementById('apps-script-code').textContent = APPS_SCRIPT;
-  const saved = localStorage.getItem('dawua_webhook');
-  if (saved) document.getElementById('inp-webhook').value = saved;
-}
-
-function copiarScript() {
-  navigator.clipboard.writeText(APPS_SCRIPT).then(() => {
-    showToast('✅ Código copiado al portapapeles');
-  }).catch(() => {
-    showToast('Selecciona el código manualmente y cópialo', true);
-  });
+function setStockInicial() {
+  const v = parseInt(document.getElementById('inp-stock-inicial').value);
+  if (!v || v <= 0) { toast('Ingresa un número válido', true); return; }
+  D.stockAriana = v;
+  guardar();
+  toast(`✅ Stock inicial: ${v} unidades`);
+  renderDash();
 }
 
 function guardarWebhook() {
   const url = document.getElementById('inp-webhook').value.trim();
-  if (!url || !url.startsWith('https://')) {
-    showToast('URL inválida. Debe empezar con https://', true);
-    return;
-  }
-  estado.webhookURL = url;
-  localStorage.setItem('dawua_webhook', url);
-  showToast('✅ URL guardada. Ya puedes registrar movimientos.');
+  if (!url || !url.startsWith('https://')) { toast('URL inválida', true); return; }
+  D.webhookURL = url;
+  localStorage.setItem('dawua_wh', url);
+  toast('✅ Conexión guardada');
 }
 
-async function probarConexion() {
-  const url = estado.webhookURL || localStorage.getItem('dawua_webhook');
-  const result = document.getElementById('test-result');
-  result.style.display = 'block';
-  result.innerHTML = '<span style="color:var(--text-s)">Probando conexión...</span>';
-
-  if (!url) {
-    result.innerHTML = '<span style="color:var(--rojo)">⚠️ Primero guarda la URL del Apps Script.</span>';
-    return;
-  }
-
-  try {
-    await fetch(url, { method: 'GET', mode: 'no-cors' });
-    result.innerHTML = '<span style="color:var(--verde)">✅ Conexión establecida. El Sheet está recibiendo datos.</span>';
-  } catch(e) {
-    result.innerHTML = '<span style="color:var(--amber)">⚠️ No se pudo verificar (normal en modo no-cors). Intenta registrar un movimiento de prueba.</span>';
-  }
+function resetear() {
+  if (!confirm('¿Borrar TODOS los datos? Esta acción no se puede deshacer.')) return;
+  localStorage.removeItem('dawua_v3');
+  localStorage.removeItem('dawua_wh');
+  D = { stockAriana:0, pdvs:[], movimientos:[], webhookURL:'' };
+  toast('Datos borrados');
+  tab('dashboard', document.querySelectorAll('.nav-btn')[0]);
 }
 
-// ═══════════════════════════════════════════
-// TOAST
-// ═══════════════════════════════════════════
-let toastTimer;
-function showToast(msg, error=false) {
+// ═══ TOAST ═══
+let toastT;
+function toast(msg, err=false) {
   const t = document.getElementById('toast');
   t.textContent = msg;
-  t.className = 'toast' + (error?' error':'');
-  clearTimeout(toastTimer);
+  t.className = 'toast' + (err?' err':'');
+  clearTimeout(toastT);
   setTimeout(() => t.classList.add('show'), 10);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+  toastT = setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-// ═══════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════
-cargarEstado();
-renderDashboard();
+// ═══ INIT ═══
+cargar();
+renderDash();
 </script>
 </body>
 </html>
