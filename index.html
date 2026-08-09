@@ -263,10 +263,90 @@ textarea{min-height:70px;resize:none}
       <button class="btn btn-primary" onclick="exportarLiq()">📤 Compartir resumen</button>
     </div>
     <div class="card">
-      <div class="card-title">Cuentas de depósito</div>
-      <div style="font-size:12px;color:var(--ts);line-height:1.9">
-        <div style="margin-bottom:8px"><strong style="color:var(--v)">DAWUANATURE S.A.</strong> · Trizzia Bosqueti<br><span style="color:var(--am)">⚠️ Completar en hoja Datos Bancarios</span></div>
-        <div><strong style="color:var(--az)">GRUCSA</strong> · RUC 0992585684001<br><span style="color:var(--am)">⚠️ Juan Carlos completa datos bancarios</span></div>
+      <div class="card-title">📤 Cuenta destino DAWUA</div>
+      <div style="background:var(--vl);border:1.5px solid var(--vb);border-radius:10px;padding:14px">
+        <div style="font-size:11px;color:var(--ts);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">Depósito principal</div>
+        <div style="font-size:14px;font-weight:800;color:var(--v);margin-bottom:8px">DAWUANATURE S.A.</div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--bd)">
+          <span style="font-size:12px;color:var(--ts)">Banco</span>
+          <span style="font-size:13px;font-weight:700;font-family:'JetBrains Mono',monospace">Pichincha</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--bd)">
+          <span style="font-size:12px;color:var(--ts)">Tipo de cuenta</span>
+          <span style="font-size:13px;font-weight:700;font-family:'JetBrains Mono',monospace">Corriente</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--bd);cursor:pointer" onclick="copiar('2100202915','Número copiado')">
+          <span style="font-size:12px;color:var(--ts)">Número cuenta</span>
+          <span style="font-size:13px;font-weight:700;font-family:'JetBrains Mono',monospace">2100202915 📋</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--bd);cursor:pointer" onclick="copiar('993190896001','RUC copiado')">
+          <span style="font-size:12px;color:var(--ts)">RUC</span>
+          <span style="font-size:13px;font-weight:700;font-family:'JetBrains Mono',monospace">993190896001 📋</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0">
+          <span style="font-size:12px;color:var(--ts)">Titular</span>
+          <span style="font-size:13px;font-weight:700">Trizzia Bosqueti</span>
+        </div>
+        <div style="margin-top:10px;font-size:11px;color:var(--ts);line-height:1.5">
+          📱 <a href="https://wa.me/593981279785" style="color:var(--vm);text-decoration:none;font-weight:700">WhatsApp Trizzia →</a><br>
+          ✉️ trizzia@dawuanature.com
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">💡 Guía de liquidación</div>
+      <div style="font-size:13px;color:var(--v);line-height:1.7">
+        <div style="padding:8px 0;border-bottom:1px solid var(--bd)">
+          <strong>1. Recoge dinero PDVs</strong><br>
+          <span style="font-size:12px;color:var(--ts)">Días 14 y 28 · precio $14.99/frasco</span>
+        </div>
+        <div style="padding:8px 0;border-bottom:1px solid var(--bd)">
+          <strong>2. Paga comisión al PDV</strong><br>
+          <span style="font-size:12px;color:var(--ts)">20% = $2.61 por frasco vendido · efectivo</span>
+        </div>
+        <div style="padding:8px 0;border-bottom:1px solid var(--bd)">
+          <strong>3. Descuenta tu comisión</strong><br>
+          <span style="font-size:12px;color:var(--ts)">10% = $1.30 por frasco vendido</span>
+        </div>
+        <div style="padding:8px 0">
+          <strong>4. Deposita el saldo</strong><br>
+          <span style="font-size:12px;color:var(--ts)">Transferencia a DAWUA (arriba) · días 15 y último</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🧮 Ejemplo por frasco vendido</div>
+      <div style="font-size:13px;line-height:1.9">
+        <div style="display:flex;justify-content:space-between;padding:4px 0"><span>Precio turista</span><span style="font-family:'JetBrains Mono',monospace;font-weight:700">$14.99</span></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;color:var(--am)"><span>— PDV recibe 20%</span><span style="font-family:'JetBrains Mono',monospace;font-weight:700">-$2.61</span></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;color:var(--am)"><span>— Tu comisión 10%</span><span style="font-family:'JetBrains Mono',monospace;font-weight:700">-$1.30</span></div>
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid var(--bd);font-weight:800;color:var(--v)"><span>A depositar a DAWUA</span><span style="font-family:'JetBrains Mono',monospace">$11.08</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📞 Contactos rápidos</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <a href="https://wa.me/593981279785" style="text-decoration:none;color:inherit">
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--bg);border-radius:10px;border:1px solid var(--bd)">
+            <div style="width:38px;height:38px;border-radius:10px;background:#25D366;display:flex;align-items:center;justify-content:center;font-size:18px">💬</div>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:700">Trizzia · DAWUA GYE</div>
+              <div style="font-size:11px;color:var(--ts);font-family:'JetBrains Mono',monospace">+593 98 127 9785</div>
+            </div>
+          </div>
+        </a>
+        <a href="https://wa.me/593992929704" style="text-decoration:none;color:inherit">
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--bg);border-radius:10px;border:1px solid var(--bd)">
+            <div style="width:38px;height:38px;border-radius:10px;background:var(--v);display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff">🌿</div>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:700">Juan Carlos · WDB</div>
+              <div style="font-size:11px;color:var(--ts);font-family:'JetBrains Mono',monospace">Coordinación general</div>
+            </div>
+          </div>
+        </a>
       </div>
     </div>
   </div>
@@ -298,6 +378,66 @@ textarea{min-height:70px;resize:none}
       </div>
       <button class="btn btn-sec" onclick="sincronizarTodo()" id="btn-sync">📤 Sincronizar todo al Google Sheet</button>
       <div id="sync-status" style="font-size:12px;color:var(--ts);margin-top:8px;text-align:center"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🏦 Mis datos bancarios</div>
+      <div style="font-size:12px;color:var(--ts);line-height:1.5;margin-bottom:12px">
+        Completa aquí tus datos para recibir tu comisión del 10% en cada liquidación. Se envían directamente al Sheet.
+      </div>
+      <div class="form-group">
+        <label>Nombre completo</label>
+        <input type="text" id="mb-nombre" value="Ariana Domenica Páez Gómez">
+      </div>
+      <div class="form-group">
+        <label>Cédula</label>
+        <input type="text" id="mb-cedula" placeholder="Ej: 0912345678" inputmode="numeric">
+      </div>
+      <div class="form-group">
+        <label>Banco</label>
+        <select id="mb-banco">
+          <option value="">Selecciona tu banco...</option>
+          <option>Pichincha</option>
+          <option>Guayaquil</option>
+          <option>Pacífico</option>
+          <option>Produbanco</option>
+          <option>Bolivariano</option>
+          <option>Internacional</option>
+          <option>Austro</option>
+          <option>Machala</option>
+          <option>Loja</option>
+          <option>Solidario</option>
+          <option>ProCredit</option>
+          <option>Banco del Estado (BDE)</option>
+          <option>BanEcuador</option>
+          <option>Cooperativa JEP</option>
+          <option>Cooperativa Jardín Azuayo</option>
+          <option>Cooperativa Policía Nacional</option>
+          <option>Cooperativa 29 de Octubre</option>
+          <option>Otro</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Tipo de cuenta</label>
+        <select id="mb-tipo">
+          <option value="">Selecciona el tipo...</option>
+          <option>Ahorros</option>
+          <option>Corriente</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Número de cuenta</label>
+        <input type="text" id="mb-numero" placeholder="Ej: 2100202915" inputmode="numeric">
+      </div>
+      <div class="form-group">
+        <label>Correo electrónico</label>
+        <input type="text" id="mb-email" placeholder="tu@correo.com" inputmode="email">
+      </div>
+      <div class="form-group">
+        <label>WhatsApp</label>
+        <input type="tel" id="mb-wa" value="+593 992929704">
+      </div>
+      <button class="btn btn-primary" onclick="guardarMisDatos()">💾 Guardar y enviar al Sheet</button>
+      <div id="mb-status" style="font-size:12px;color:var(--ts);margin-top:8px;text-align:center"></div>
     </div>
     <div class="card">
       <div class="card-title">Datos del sistema</div>
@@ -740,11 +880,75 @@ function renderLiquidacion() {
 
 function exportarLiq() { toast('Próximamente: exportar por WhatsApp'); }
 
+function copiar(texto, msg) {
+  navigator.clipboard.writeText(texto).then(() => {
+    toast('✅ ' + (msg || 'Copiado'));
+  }).catch(() => {
+    toast('No se pudo copiar', true);
+  });
+}
+
 // ═══ CONFIG ═══
 function renderConfig() {
   document.getElementById('inp-stock-inicial').value = D.stockAriana || '';
   const wh = localStorage.getItem('dawua_wh') || '';
   document.getElementById('inp-webhook').value = wh;
+  // Cargar datos bancarios guardados
+  try {
+    const md = JSON.parse(localStorage.getItem('dawua_misdatos') || '{}');
+    if (md.nombre) document.getElementById('mb-nombre').value = md.nombre;
+    if (md.cedula) document.getElementById('mb-cedula').value = md.cedula;
+    if (md.banco) document.getElementById('mb-banco').value = md.banco;
+    if (md.tipo) document.getElementById('mb-tipo').value = md.tipo;
+    if (md.numero) document.getElementById('mb-numero').value = md.numero;
+    if (md.email) document.getElementById('mb-email').value = md.email;
+    if (md.wa) document.getElementById('mb-wa').value = md.wa;
+  } catch(e) {}
+}
+
+async function guardarMisDatos() {
+  const datos = {
+    nombre: document.getElementById('mb-nombre').value.trim(),
+    cedula: document.getElementById('mb-cedula').value.trim(),
+    banco: document.getElementById('mb-banco').value.trim(),
+    tipo: document.getElementById('mb-tipo').value.trim(),
+    numero: document.getElementById('mb-numero').value.trim(),
+    email: document.getElementById('mb-email').value.trim(),
+    wa: document.getElementById('mb-wa').value.trim(),
+  };
+  const status = document.getElementById('mb-status');
+  if (!datos.cedula || !datos.banco || !datos.numero) {
+    status.innerHTML = '<span style="color:var(--rd)">Completa al menos: cédula, banco y número de cuenta</span>';
+    return;
+  }
+  // Guardar local
+  try { localStorage.setItem('dawua_misdatos', JSON.stringify(datos)); } catch(e) {}
+  // Enviar al Sheet como un movimiento especial tipo "datos_bancarios"
+  const url = D.webhookURL || localStorage.getItem('dawua_wh');
+  if (url) {
+    try {
+      await fetch(url, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tipo: 'datos_bancarios',
+          fecha: new Date().toISOString(),
+          pdvNombre: 'ARIANA PAEZ',
+          qty: 0,
+          precio: 0,
+          notas: `Cédula: ${datos.cedula} · Banco: ${datos.banco} · ${datos.tipo} ${datos.numero} · ${datos.email} · ${datos.wa}`,
+        }),
+      });
+      status.innerHTML = '<span style="color:var(--vb);font-weight:700">✅ Datos guardados y enviados al Sheet</span>';
+      toast('✅ Tus datos bancarios se enviaron a DAWUA');
+    } catch(e) {
+      status.innerHTML = '<span style="color:var(--am)">Datos guardados localmente. Conecta el Sheet para enviarlos.</span>';
+    }
+  } else {
+    status.innerHTML = '<span style="color:var(--am)">Datos guardados localmente. Falta conectar el Sheet.</span>';
+    toast('Guardado. Conecta el Sheet para enviar');
+  }
 }
 
 function setStockInicial() {
