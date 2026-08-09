@@ -292,6 +292,12 @@ textarea{min-height:70px;resize:none}
         <input type="text" id="inp-webhook" placeholder="https://script.google.com/macros/s/...">
       </div>
       <button class="btn btn-primary" onclick="guardarWebhook()">✓ Guardar conexión</button>
+      <div style="border-top:1px solid var(--bd);margin:16px 0 12px"></div>
+      <div style="font-size:12px;color:var(--ts);line-height:1.5;margin-bottom:10px">
+        Si ya tenías movimientos registrados antes de conectar el Sheet, toca este botón para sincronizarlos todos al Google Sheet:
+      </div>
+      <button class="btn btn-sec" onclick="sincronizarTodo()" id="btn-sync">📤 Sincronizar todo al Google Sheet</button>
+      <div id="sync-status" style="font-size:12px;color:var(--ts);margin-top:8px;text-align:center"></div>
     </div>
     <div class="card">
       <div class="card-title">Datos del sistema</div>
@@ -756,6 +762,54 @@ function guardarWebhook() {
   D.webhookURL = url;
   localStorage.setItem('dawua_wh', url);
   toast('✅ Conexión guardada');
+}
+
+async function sincronizarTodo() {
+  const url = D.webhookURL || localStorage.getItem('dawua_wh');
+  if (!url) { toast('Primero guarda la URL del Apps Script', true); return; }
+
+  const btn = document.getElementById('btn-sync');
+  const status = document.getElementById('sync-status');
+  const total = D.movimientos.length;
+
+  if (total === 0) {
+    status.innerHTML = '<span style="color:var(--am)">No hay movimientos para sincronizar</span>';
+    return;
+  }
+
+  if (!confirm(`¿Sincronizar ${total} movimientos al Google Sheet?`)) return;
+
+  btn.disabled = true;
+  btn.style.opacity = '0.6';
+  let enviados = 0;
+  let errores = 0;
+
+  for (const mov of D.movimientos) {
+    try {
+      await fetch(url, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(mov),
+      });
+      enviados++;
+      status.innerHTML = `<span style="color:var(--v)">Enviando ${enviados}/${total}...</span>`;
+      await new Promise(r => setTimeout(r, 300)); // esperar 300ms entre envíos
+    } catch(e) {
+      errores++;
+    }
+  }
+
+  btn.disabled = false;
+  btn.style.opacity = '1';
+
+  if (errores === 0) {
+    status.innerHTML = `<span style="color:var(--vb);font-weight:700">✅ ${enviados} movimientos sincronizados al Sheet</span>`;
+    toast(`✅ ${enviados} movimientos enviados al Sheet`);
+  } else {
+    status.innerHTML = `<span style="color:var(--am)">⚠️ ${enviados} enviados, ${errores} con error</span>`;
+    toast(`Enviados: ${enviados}. Errores: ${errores}`, true);
+  }
 }
 
 function resetear() {
