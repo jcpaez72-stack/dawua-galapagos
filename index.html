@@ -354,13 +354,16 @@ textarea{min-height:70px;resize:none}
   <!-- ═══ CONFIG ═══ -->
   <div id="s-config" class="screen">
     <div class="card">
-      <div class="card-title">Stock inicial de Ariana</div>
+      <div class="card-title">📥 Recepción de mercadería</div>
+      <div style="font-size:12px;color:var(--ts);line-height:1.5;margin-bottom:10px">
+        Registra cada vez que recibas producto de DAWUA GYE. Quedará como movimiento trazable en el Historial.
+      </div>
       <div class="form-group">
-        <label>Unidades que recibiste de DAWUA GYE</label>
+        <label>Unidades recibidas de DAWUA GYE</label>
         <input type="number" id="inp-stock-inicial" inputmode="numeric" placeholder="Ej: 50">
       </div>
-      <button class="btn btn-primary" onclick="setStockInicial()">✓ Guardar stock inicial</button>
-      <div style="font-size:11px;color:var(--ts);margin-top:8px;line-height:1.5">Solo configura esto una vez al inicio. A partir de aquí el sistema descuenta automáticamente cuando registras entregas a PDVs.</div>
+      <button class="btn btn-primary" onclick="setStockInicial()">✓ Registrar recepción</button>
+      <div style="font-size:11px;color:var(--ts);margin-top:8px;line-height:1.5">Al registrar, tu stock aumenta y queda un movimiento tipo <strong>recepción</strong> en el Sheet.</div>
     </div>
     <div class="card">
       <div class="card-title">Conectar Google Sheets</div>
@@ -546,7 +549,8 @@ function tab(id, btn) {
 
 // ═══ DASHBOARD ═══
 function renderDash() {
-  const vendidas = D.movimientos.filter(m => m.tipo === 'venta').reduce((a,m) => a+m.qty, 0);
+  const movsActivos = D.movimientos.filter(m => !m.anulado);
+  const vendidas = movsActivos.filter(m => m.tipo === 'venta').reduce((a,m) => a+m.qty, 0);
   const ingresos = vendidas * PVP;
   document.getElementById('k-stock').textContent = D.stockAriana;
   document.getElementById('k-pdvs').textContent = D.pdvs.length;
@@ -585,7 +589,7 @@ function renderDash() {
 
   // Última actividad
   const ua = document.getElementById('ultima-act');
-  const rec = [...D.movimientos].reverse().slice(0,3);
+  const rec = [...D.movimientos].filter(m => !m.anulado).reverse().slice(0,3);
   ua.innerHTML = rec.length === 0
     ? '<div style="text-align:center;padding:16px;color:var(--ts);font-size:13px">Sin movimientos aún</div>'
     : rec.map(movHTML).join('');
@@ -821,18 +825,24 @@ async function registrar() {
 
 // ═══ HISTORIAL ═══
 function movHTML(m) {
-  const iconos = {entrega:'📦',venta:'💰',devolucion:'↩️',ajuste:'✏️'};
-  const cls = {entrega:'entrega',venta:'venta',devolucion:'entrega',ajuste:'alerta'};
-  const color = {entrega:'#25D366',venta:'#1D4ED8',devolucion:'#F59E0B',ajuste:'#6B7280'};
-  const signo = {entrega:'-',venta:'',devolucion:'+',ajuste:'='};
+  const iconos = {entrega:'📦',venta:'💰',devolucion:'↩️',ajuste:'✏️',recepcion:'📥',datos_bancarios:'🏦'};
+  const cls = {entrega:'entrega',venta:'venta',devolucion:'entrega',ajuste:'alerta',recepcion:'entrega',datos_bancarios:'alerta'};
+  const color = {entrega:'#25D366',venta:'#1D4ED8',devolucion:'#F59E0B',ajuste:'#6B7280',recepcion:'#064E47',datos_bancarios:'#6B7280'};
+  const signo = {entrega:'-',venta:'',devolucion:'+',ajuste:'=',recepcion:'+',datos_bancarios:''};
   const fecha = new Date(m.fecha);
   const hora = fecha.toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit'});
   const dia = fecha.toLocaleDateString('es-EC',{day:'2-digit',month:'short'});
-  return `<div class="mov-item">
+  const anulado = m.anulado === true;
+  const opacityStyle = anulado ? 'opacity:.45;text-decoration:line-through' : '';
+  const anuladoBadge = anulado ? '<span style="background:var(--rc);color:var(--rd);font-size:9px;font-weight:800;padding:2px 6px;border-radius:6px;margin-left:6px">ANULADO</span>' : '';
+  const btnAnular = (!anulado && m.tipo !== 'datos_bancarios') ?
+    `<button onclick="anularMov(${m.id})" style="background:none;border:none;color:var(--rd);font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;padding:4px 0;margin-top:3px">✕ Anular</button>` : '';
+  return `<div class="mov-item" style="${opacityStyle}">
     <div class="mov-ico ${cls[m.tipo]||'entrega'}">${iconos[m.tipo]||'📦'}</div>
     <div class="mov-info">
-      <div class="mov-pdv">${m.pdvNombre}</div>
+      <div class="mov-pdv">${m.pdvNombre}${anuladoBadge}</div>
       <div class="mov-det">${m.tipo.charAt(0).toUpperCase()+m.tipo.slice(1)}${m.notas?' · '+m.notas:''}</div>
+      ${btnAnular}
     </div>
     <div class="mov-right">
       <div class="mov-qty" style="color:${color[m.tipo]}">${signo[m.tipo]}${m.qty}u</div>
@@ -847,9 +857,68 @@ function renderHistorial() {
   el.innerHTML = [...D.movimientos].reverse().map(movHTML).join('');
 }
 
+async function anularMov(id) {
+  const m = D.movimientos.find(x => x.id === id);
+  if (!m) return;
+  const razon = prompt(`¿Anular este movimiento?\n\n${m.tipo.toUpperCase()} · ${m.pdvNombre} · ${m.qty}u\n\nEscribe el motivo (obligatorio):`);
+  if (!razon || razon.trim().length < 3) { toast('Anulación cancelada · falta motivo', true); return; }
+
+  // Marcar anulado
+  m.anulado = true;
+  m.anuladoEn = new Date().toISOString();
+  m.motivoAnulacion = razon.trim();
+
+  // Revertir stock según tipo
+  if (m.tipo === 'entrega') {
+    // Se descontó de Ariana y se sumó al PDV → revertir
+    D.stockAriana += m.qty;
+    const pdv = D.pdvs.find(p => p.id === m.pdvId);
+    if (pdv) pdv.stock = Math.max(0, pdv.stock - m.qty);
+  } else if (m.tipo === 'venta') {
+    // Se descontó del PDV → devolver
+    const pdv = D.pdvs.find(p => p.id === m.pdvId);
+    if (pdv) pdv.stock += m.qty;
+  } else if (m.tipo === 'devolucion') {
+    // Se sumó a Ariana y se descontó del PDV → revertir
+    D.stockAriana = Math.max(0, D.stockAriana - m.qty);
+    const pdv = D.pdvs.find(p => p.id === m.pdvId);
+    if (pdv) pdv.stock += m.qty;
+  } else if (m.tipo === 'recepcion') {
+    // Se sumó a Ariana → descontar
+    D.stockAriana = Math.max(0, D.stockAriana - m.qty);
+  }
+
+  guardar();
+
+  // Notificar al Sheet
+  const url = D.webhookURL || localStorage.getItem('dawua_wh');
+  if (url) {
+    try {
+      await fetch(url, {
+        method: 'POST', mode: 'no-cors',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({
+          tipo: 'anulacion',
+          fecha: new Date().toISOString(),
+          pdvNombre: m.pdvNombre,
+          qty: m.qty,
+          precio: 0,
+          notas: `Anula movimiento ${m.tipo} del ${new Date(m.fecha).toLocaleDateString('es-EC')} · Motivo: ${razon.trim()}`,
+          stockAriaDesp: D.stockAriana,
+          stockPDVDesp: D.pdvs.find(p=>p.id===m.pdvId)?.stock,
+          movimientoAnuladoId: m.id,
+        }),
+      });
+    } catch(e) {}
+  }
+
+  toast('✅ Movimiento anulado · stock actualizado');
+  renderHistorial();
+}
+
 // ═══ LIQUIDACIÓN ═══
 function renderLiquidacion() {
-  const ventas = D.movimientos.filter(m => m.tipo === 'venta');
+  const ventas = D.movimientos.filter(m => m.tipo === 'venta' && !m.anulado);
   const totalU = ventas.reduce((a,m) => a+m.qty, 0);
   const totalCob = totalU * PVP;
   const comPDV = totalU * BASE * C_PDV;
@@ -951,12 +1020,50 @@ async function guardarMisDatos() {
   }
 }
 
-function setStockInicial() {
+async function setStockInicial() {
   const v = parseInt(document.getElementById('inp-stock-inicial').value);
   if (!v || v <= 0) { toast('Ingresa un número válido', true); return; }
-  D.stockAriana = v;
+
+  // Verificar si ya hay una recepción registrada
+  const yaHayRecepcion = D.movimientos.some(m => m.tipo === 'recepcion' && !m.anulado);
+  if (yaHayRecepcion) {
+    if (!confirm('Ya registraste una recepción de mercadería antes.\n\n¿Registrar OTRA recepción adicional de ' + v + ' unidades?')) return;
+  }
+
+  // Crear movimiento de recepción trazable
+  const mov = {
+    id: Date.now(),
+    fecha: new Date().toISOString(),
+    tipo: 'recepcion',
+    pdvId: null,
+    pdvNombre: 'RECEPCIÓN DAWUA GYE → Ariana',
+    qty: v,
+    precio: 0,
+    notas: 'Stock inicial recibido de DAWUA en Guayaquil',
+    stockAriaAntes: D.stockAriana,
+    stockPDVAntes: 0,
+  };
+
+  D.stockAriana += v;
+  mov.stockAriaDesp = D.stockAriana;
+  mov.stockPDVDesp = 0;
+  D.movimientos.push(mov);
   guardar();
-  toast(`✅ Stock inicial: ${v} unidades`);
+
+  // Enviar al Sheet
+  const url = D.webhookURL || localStorage.getItem('dawua_wh');
+  if (url) {
+    try {
+      await fetch(url, {
+        method: 'POST', mode: 'no-cors',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(mov),
+      });
+    } catch(e) {}
+  }
+
+  document.getElementById('inp-stock-inicial').value = '';
+  toast(`✅ Recepción ${v}u registrada · Stock Ariana: ${D.stockAriana}u`);
   renderDash();
 }
 
