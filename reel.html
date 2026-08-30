@@ -55,26 +55,6 @@ body {
   display: block;
 }
 
-/* Escena 3 (Flyer): mostrar COMPLETO con object-fit contain */
-.escena-3 {
-  background: #43582F !important;
-}
-
-.escena-3 img {
-  object-fit: contain !important;
-  animation: flyerReveal 5s ease-in-out infinite !important;
-}
-
-/* Zoom cinematográfico de arriba hacia abajo para leer el flyer */
-@keyframes flyerReveal {
-  0% {
-    transform: scale(1.15) translateY(-5%);
-  }
-  100% {
-    transform: scale(1.05) translateY(3%);
-  }
-}
-
 /* Escenas - todas ocupan 100% del contenedor */
 .escena {
   position: absolute;
